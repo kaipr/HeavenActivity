@@ -1,0 +1,7 @@
+name: HeavenActivity
+main: net.blockheaven.kaipr.heavenactivity.HeavenActivity
+version: 0.1-beta
+commands:
+    activity:
+        description: Activity commands
+        usage: /<command>
