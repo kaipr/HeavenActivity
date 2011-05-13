@@ -15,14 +15,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.player.PlayerListener;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.nijiko.coelho.iConomy.system.Bank;
-import com.nijiko.coelho.iConomy.system.Account;
+import com.iConomy.*;
+import com.iConomy.system.Holdings;
 import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 
 public class HeavenActivity extends JavaPlugin {
@@ -40,6 +39,11 @@ public class HeavenActivity extends JavaPlugin {
      * Permission handler
      */
     public static PermissionHandler Permissions;
+    
+    /**
+     * iConomy hook
+     */
+    public static iConomy iConomy;
     
     /**
      * Stores the sequences of players activities <sequence, <playerName, activity>>
@@ -77,12 +81,11 @@ public class HeavenActivity extends JavaPlugin {
         
         config = new HeavenActivityConfig(this);
         
-        setupPermissions();
-        
         startUpdateTimer();
         
         PlayerListener playerListener = new HeavenActivityPlayerListener(this);
         BlockListener blockListener = new HeavenActivityBlockListener(this);
+        ServerListener serverListener = new HeavenActivityServerListener(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
@@ -90,6 +93,8 @@ public class HeavenActivity extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Monitor, this);
         pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
         pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Monitor, this);
+        pm.registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
+        pm.registerEvent(Event.Type.PLUGIN_DISABLE, serverListener, Priority.Monitor, this);
         
     }
     
@@ -316,25 +321,31 @@ public class HeavenActivity extends JavaPlugin {
     /**
      * Gives income to online players
      */
+    @SuppressWarnings("static-access")
     protected void handleOnlineIncome() {
     	
-    	Bank bank = com.nijiko.coelho.iConomy.iConomy.getBank();
+    	if (iConomy == null) {
+    		logger.warning("[HeavenActivity] Want to give income, but iConomy isn't active! Skipping...");
+    		return;
+    	}
     	
     	for (Player player : getServer().getOnlinePlayers()) {
         	int activity = getActivity(player);
         	if (activity == 0) {
         		sendMessage(player, ChatColor.RED + "You were too lazy, no income for you this time!");
         	} else {
-        		Account account = bank.getAccount(player.getName());
-                Double amount = config.incomeBaseValue 
+				Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
+                
+				Double amount = config.incomeBaseValue 
                   + (((double)(activity - config.incomeTargetActivity) / (double)config.incomeActivityModifier) * config.incomeBaseValue)
-                  + (account.getBalance() * config.incomeBalanceMultiplier);
-                account.add(amount);
-                sendMessage(player, "You got " + activityColor(activity) + bank.format(amount) 
+                  + (balance.balance() * config.incomeBalanceMultiplier);
+                balance.add(amount);
+                
+                sendMessage(player, "You got " + activityColor(activity) + iConomy.format(amount) 
                 		+ ChatColor.GRAY + " income for being " 
                 		+ activityColor(activity) + activity + "% " + ChatColor.GRAY + "active.");
                 sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
-                		+ bank.format(account.getBalance()));
+                		+ iConomy.format(balance.balance()));
         	}
         }
     	
@@ -350,20 +361,6 @@ public class HeavenActivity extends JavaPlugin {
     		return ChatColor.YELLOW;
     	}
     	
-    }
-    
-    private void setupPermissions() {
-        
-    	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
-
-        if (HeavenActivity.Permissions == null) {
-            if (test != null) {
-                HeavenActivity.Permissions = ((Permissions)test).getHandler();
-            } else {
-                logger.info("[HeavenActivity] Permission system not detected!");
-            }
-        }
-        
     }
 
 }
