@@ -1,5 +1,7 @@
 package net.blockheaven.kaipr.heavenactivity;
 
+import java.util.List;
+
 import org.bukkit.util.config.Configuration;
 
 public class HeavenActivityConfig {
@@ -84,27 +86,31 @@ public class HeavenActivityConfig {
 	public void reloadAndSave() {
 		config.load();
 		
-		config.setProperty("general.max_sequences", maxSequences);
-		config.setProperty("general.sequence_interval", sequenceInterval);
-		config.setProperty("general.notification_sequence", notificationSequence);
-		config.setProperty("general.income_sequence", incomeSequence);
-		config.setProperty("general.point_multiplier", pointMultiplier);
+		List<String> configNodes;
 		
-		config.setProperty("income.enabled", incomeEnabled);
-		config.setProperty("income.base_value", incomeBaseValue);
-		config.setProperty("income.target_activity", incomeTargetActivity);
-		config.setProperty("income.activity_modifier", incomeActivityModifier);
-		config.setProperty("income.balance_multiplier", incomeBalanceMultiplier);
+		configNodes = config.getKeys("general");
+		if (!configNodes.contains("max_sequences"))
+		    config.setProperty("general.max_sequences", maxSequences);
+		if (!configNodes.contains("sequence_interval"))
+		    config.setProperty("general.sequence_interval", sequenceInterval);
+		if (!configNodes.contains("notification_sequence"))
+		    config.setProperty("general.notification_sequence", notificationSequence);
+		if (!configNodes.contains("income_sequence"))
+		    config.setProperty("general.income_sequence", incomeSequence);
+		if (!configNodes.contains("point_multiplier"))
+		    config.setProperty("general.point_multiplier", pointMultiplier);
 		
-		config.setProperty("chat.points", chatPoints);
-		config.setProperty("chat.char_points", chatCharPoints);
-		config.setProperty("command.points", commandPoints);
-		config.setProperty("command.char_points", commandCharPoints);
-		config.setProperty("move.delay", moveDelay);
-		config.setProperty("move.points", movePoints);
-		config.setProperty("block.delay", blockDelay);
-		config.setProperty("block.place_points", blockPlacePoints);
-		config.setProperty("block.break_points", blockBreakPoints);
+		configNodes = config.getKeys("income");
+		if (!configNodes.contains("enabled"))
+		    config.setProperty("income.enabled", incomeEnabled);
+		if (!configNodes.contains("base_value"))
+		    config.setProperty("income.base_value", incomeBaseValue);
+		if (!configNodes.contains("target_activity"))
+		    config.setProperty("income.target_activity", incomeTargetActivity);
+		if (!configNodes.contains("activity_modifier"))
+		    config.setProperty("income.activity_modifier", incomeActivityModifier);
+		if (!configNodes.contains("balance_multiplier"))
+	        config.setProperty("income.balance_multiplier", incomeBalanceMultiplier);
 		
 		config.setProperty("stats.chat_points", plugin.chatPointsGiven);
     	config.setProperty("stats.chat_char_points", plugin.chatCharPointsGiven);
