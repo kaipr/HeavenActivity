@@ -121,10 +121,14 @@ public class HeavenActivity extends JavaPlugin {
     		int activity = getActivity((Player) sender);
     		sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
     	} else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
-    		sendMessage(sender, ChatColor.YELLOW + "Online players' activity " + ChatColor.DARK_GRAY + "------");
-    		for (Player player : getServer().getOnlinePlayers()) {
-    			int activity = getActivity(player);
-    			sendMessage(sender, player.getName() + ": " + activityColor(activity) + activity + "%");
+    		if (sender.isOp() || Permissions.has((Player)sender, "activity.view.list")) {
+    		    sendMessage(sender, ChatColor.YELLOW + "Online players' activity " + ChatColor.DARK_GRAY + "------");
+    		    for (Player player : getServer().getOnlinePlayers()) {
+    			    int activity = getActivity(player);
+    			    sendMessage(sender, player.getName() + ": " + activityColor(activity) + activity);
+    		    }
+    		} else {
+    			sendMessage(sender, ChatColor.RED + "You have no permission to see a list of online players' activity.");
     		}
     	} else if (args[0].compareToIgnoreCase("admin") == 0 && 
     			(sender.isOp() || Permissions.has((Player)sender, "activity.admin"))) {
@@ -163,9 +167,13 @@ public class HeavenActivity extends JavaPlugin {
         		sendMessage(sender, ChatColor.RED + "Stats reseted");
         	}
     	} else if (args.length == 1) {
-    		String playerName = matchSinglePlayer(sender, args[0]).getName();
-    		int activity = getActivity(playerName);
-    		sendMessage(sender, "Current activity of " + playerName + ": " + activityColor(activity) + activity + "%");
+    		if (sender.isOp() || Permissions.has((Player)sender, "activity.view.other")) {
+    		   String playerName = matchSinglePlayer(sender, args[0]).getName();
+    		   int activity = getActivity(playerName);
+    		   sendMessage(sender, "Current activity of " + playerName + ": " + activityColor(activity) + activity + "%");
+    		} else {
+    			sendMessage(sender, ChatColor.RED + "You have no permission to see other's activity.");
+    		}
     	}
     		
     	return true;
