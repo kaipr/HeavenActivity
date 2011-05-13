@@ -324,6 +324,9 @@ public class HeavenActivity extends JavaPlugin {
     @SuppressWarnings("static-access")
     protected void handleOnlineIncome() {
     	
+    	if (playersActivities.size() == 0)
+    		return;
+    	
     	if (iConomy == null) {
     		logger.warning("[HeavenActivity] Want to give income, but iConomy isn't active! Skipping...");
     		return;
