@@ -122,11 +122,13 @@ public class HeavenActivity extends JavaPlugin {
     		sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
     	} else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
     		if (sender.isOp() || Permissions.has((Player)sender, "activity.view.list")) {
-    		    sendMessage(sender, ChatColor.YELLOW + "Online players' activity " + ChatColor.DARK_GRAY + "------");
-    		    for (Player player : getServer().getOnlinePlayers()) {
+    			StringBuilder res = new StringBuilder();
+    			for (Player player : getServer().getOnlinePlayers()) {
     			    int activity = getActivity(player);
-    			    sendMessage(sender, player.getName() + ": " + activityColor(activity) + activity);
+    			    res.append(activityColor(activity) + player.getName() + " " + activity + "%");
+    			    res.append(ChatColor.GRAY + ", ");
     		    }
+    		    sendMessage(sender, res.substring(0, res.length() - 2));
     		} else {
     			sendMessage(sender, ChatColor.RED + "You have no permission to see a list of online players' activity.");
     		}
