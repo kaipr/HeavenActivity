@@ -1,0 +1,57 @@
+# The comments will be gone after first reload/disable of the plugin
+general:
+    # The time (in seconds) one sequence lasts
+    sequence_interval: 60
+    # Multiplier for all points, if you want more activity for all activities, rise this
+    point_multiplier: 1.0
+    # Sequence(s) in which the income is given
+    # (max_sequences % income_sequence == 0)
+    income_sequence: 15
+    # Sequence(s) in which the players are notified about their activity, 6 means in sequence 6, 12(, ...)
+    # (max_sequences % notification_sequence == 0)
+    notification_sequence: 6
+    # Max sequences which are stored, default 15 * 60 = 15 minutes
+    max_sequences: 15
+income:
+    # iConomy income enabled?
+    enabled: false
+    # Multiplies the current balance of the players and adds/subtracts it to/from the income
+    balance_multiplier: -0.00025
+    # How mutch the activity affects the income, less is more (read documentation!)
+    activity_modifier: 75
+    # Base income value, this is the value the players get at target_activity
+    base_value: 8.0
+    # Target activity for the base_value, everything above will give more income
+    # everything below will give less income
+    target_activity: 50
+block:
+    # Points per tracked broken block event
+    break_points: 1.95
+    # Points per tracked placed block event
+    place_points: 3.75
+    # Minimum delay between 2 tracked block place/break events (ms)
+    delay: 950
+move:
+    # Points per tracked move event
+    points: 0.58
+    # Minimum delay between 2 tracked move events (ms)
+    delay: 1100
+chat:
+    # Points per character on chat
+    char_points: 0.49
+    # Points per chat use (adds on the char value)
+    points: 1.0
+command:
+    # Points per character on commands
+    char_points: 0.53
+    # Points per command use (adds on the char value)
+    points: 1.0
+# This tree is just used for statistic and doesn't affect anything
+stats:
+    move_points: 0.0
+    block_break_points: 0.0
+    chat_points: 0.0
+    chat_char_points: 0.0
+    command_char_points: 0.0
+    block_place_points: 0.0
+    command_points: 0.0
