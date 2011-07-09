@@ -29,6 +29,8 @@ income:
     # everything below will give less income
     target_activity: 50
 block:
+    # Enable tracking of block break/place events?
+    tracking: true
     # Points per tracked broken block event
     break_points: 1.95
     # Points per tracked placed block event
@@ -36,16 +38,22 @@ block:
     # Minimum delay between 2 tracked block place/break events (ms)
     delay: 950
 move:
+    # Enable tracking of move events?
+    tracking: true
     # Points per tracked move event
     points: 0.58
     # Minimum delay between 2 tracked move events (ms)
     delay: 1100
 chat:
+    # Enable tracking of chat?
+    tracking: true
     # Points per character on chat
     char_points: 0.49
     # Points per chat use (adds on the char value)
     points: 1.0
 command:
+    # Enable tracking of commands?
+    tracking: true
     # Points per character on commands
     char_points: 0.53
     # Points per command use (adds on the char value)

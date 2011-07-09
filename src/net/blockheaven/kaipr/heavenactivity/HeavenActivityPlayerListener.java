@@ -80,18 +80,20 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     	
     	final String playerName = event.getPlayer().getName();
     	
-    	final Double points = plugin.getMultiplier(event.getPlayer(), "command_char") 
-    	    * event.getMessage().length() * plugin.config.commandCharPoints;
+    	if (plugin.config.commandTracking) {
+    	    final Double points = plugin.getMultiplier(event.getPlayer(), "command_char") 
+    	        * event.getMessage().length() * plugin.config.commandCharPoints;
 
-    	plugin.addActivity(playerName, points + plugin.config.commandPoints);
+    	    plugin.addActivity(playerName, points + plugin.config.commandPoints);
     	
-    	if (plugin.config.logCommands) {
-    	    HeavenActivity.logger.info("[cmd] " + event.getPlayer().getName() + ": " + event.getMessage());
+    	    // Tracking
+    	    plugin.commandCharPointsGiven += points;
+    	    plugin.commandPointsGiven += plugin.config.commandPoints;
     	}
     	
-    	// Tracking
-    	plugin.commandCharPointsGiven += points;
-    	plugin.commandPointsGiven += plugin.config.commandPoints;
+    	if (plugin.config.logCommands) {
+    	    HeavenActivity.logger.info("[cmd] " + playerName + ": " + event.getMessage());
+    	}
     	
     }
     

@@ -24,12 +24,16 @@ public class HeavenActivityConfig {
 	public int notificationSequence;
 	public int incomeSequence;
     public Double pointMultiplier;
+    public boolean chatTracking;
     public Double chatPoints;
     public Double chatCharPoints;
+    public boolean commandTracking;
     public Double commandPoints;
     public Double commandCharPoints;
+    public boolean moveTracking;
     public Integer moveDelay;
     public Double movePoints;
+    public boolean blockTracking;
     public Integer blockDelay;
     public Double blockPlacePoints;
     public Double blockBreakPoints;
@@ -69,12 +73,16 @@ public class HeavenActivityConfig {
         incomeActivityModifier        = config.getInt("income.activity_modifier", 75);
         incomeBalanceMultiplier       = config.getDouble("income.balance_multiplier", 0.0);
         
+        chatTracking                  = config.getBoolean("chat.tracking", true);
         chatPoints                    = config.getDouble("chat.points", 1.0);
         chatCharPoints                = config.getDouble("chat.char_points", 0.49);
+        commandTracking               = config.getBoolean("command.tracking", true);
         commandPoints                 = config.getDouble("command.points", 1.0);
         commandCharPoints             = config.getDouble("command.char_points", 0.53);
+        moveTracking                  = config.getBoolean("move.tracking", true);
         moveDelay                     = config.getInt("move.delay", 1100);
         movePoints                    = config.getDouble("move.points", 0.58);
+        blockTracking                 = config.getBoolean("block.tracking", true);
         blockDelay                    = config.getInt("block.delay", 950);
         blockPlacePoints              = config.getDouble("block.place_points", 3.75);
         blockBreakPoints              = config.getDouble("block.break_points", 1.95);

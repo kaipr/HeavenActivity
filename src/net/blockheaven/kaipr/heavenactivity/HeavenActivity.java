@@ -88,11 +88,16 @@ public class HeavenActivity extends JavaPlugin {
         ServerListener serverListener = new HeavenActivityServerListener(this);
 
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
-        pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Monitor, this);
-        pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Monitor, this);
-        pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
-        pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Monitor, this);
+        if (config.moveTracking)
+            pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
+        if (config.commandTracking || config.logCommands)
+            pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Monitor, this);
+        if (config.chatTracking)
+            pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Monitor, this);
+        if (config.blockTracking) {
+            pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
+            pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Monitor, this);
+        }
         pm.registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
         pm.registerEvent(Event.Type.PLUGIN_DISABLE, serverListener, Priority.Monitor, this);
         
