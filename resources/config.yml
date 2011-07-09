@@ -14,10 +14,10 @@ general:
     max_sequences: 15
 income:
     # iConomy income enabled?
-    enabled: false
+    enabled: true
     # Multiplies the current balance of the players and adds/subtracts it to/from the income
-    balance_multiplier: -0.00025
-    # How mutch the activity affects the income, less is more (read documentation!)
+    balance_multiplier: 0.0
+    # How much the activity affects the income, less is more (read documentation!)
     activity_modifier: 75
     # Base income value, this is the value the players get at target_activity
     base_value: 8.0

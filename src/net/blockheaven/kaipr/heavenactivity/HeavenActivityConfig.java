@@ -59,11 +59,11 @@ public class HeavenActivityConfig {
         incomeSequence                = config.getInt("general.income_sequence", 15);
         pointMultiplier               = config.getDouble("general.point_multiplier", 1.0);
         
-        incomeEnabled                 = config.getBoolean("income.enabled", false);
+        incomeEnabled                 = config.getBoolean("income.enabled", true);
         incomeBaseValue               = config.getDouble("income.base_value", 8);
         incomeTargetActivity          = config.getInt("income.target_activity", 50);
         incomeActivityModifier        = config.getInt("income.activity_modifier", 75);
-        incomeBalanceMultiplier       = config.getDouble("income.balance_multiplier", -0.00025);
+        incomeBalanceMultiplier       = config.getDouble("income.balance_multiplier", 0.0);
         
         chatPoints                    = config.getDouble("chat.points", 1.0);
         chatCharPoints                = config.getDouble("chat.char_points", 0.49);
