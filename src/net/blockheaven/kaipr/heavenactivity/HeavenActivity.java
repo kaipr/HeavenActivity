@@ -183,6 +183,23 @@ public class HeavenActivity extends JavaPlugin {
     }
     
     /**
+     * Returns the individual multiplier for a player
+     * 
+     * @param player
+     * @param which
+     * @return
+     */
+    public double getMultiplier(Player player, String which) {
+        final double multiplier = Permissions.getPermissionDouble(
+    			player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
+        if (multiplier == -1.0) {
+        	return 1.0;
+        } else {
+        	return multiplier;
+        }
+    }
+    
+    /**
      * Adds given amount of activity to the given playerName
      * 
      * @param playerName

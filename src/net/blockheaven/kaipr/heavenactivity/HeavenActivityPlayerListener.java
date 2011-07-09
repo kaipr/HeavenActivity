@@ -35,14 +35,11 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         		|| event.getPlayer().isInsideVehicle())
             return;
         
-        long time = System.currentTimeMillis();
-        String playerName = event.getPlayer().getName();
+        final long time = System.currentTimeMillis();
+        final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.moveDelay)) {
-        	Double multiplier = HeavenActivity.Permissions.getPermissionDouble(
-        			event.getPlayer().getWorld().getName(), playerName, "activity.multiplier.move");
-        	if (multiplier == -1.0) multiplier = 1.0;
-        	Double points = multiplier * plugin.config.movePoints;
+        	final Double points = plugin.getMultiplier(event.getPlayer(), "move") * plugin.config.movePoints;
         	
         	plugin.addActivity(playerName, points);
         	
@@ -60,20 +57,15 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     	if (event.isCancelled())
     		return;
     	
-    	String playerName = event.getPlayer().getName();
+    	final String playerName = event.getPlayer().getName();
     	
-    	Double chatCharPoints = event.getMessage().length() * plugin.config.chatCharPoints;
-        Double chatCharMultiplier = HeavenActivity.Permissions.getPermissionDouble(
-    			event.getPlayer().getWorld().getName(), playerName, "activity.multiplier.chat_char");
-        if (chatCharMultiplier == -1.0) chatCharMultiplier = 1.0;
-        chatCharPoints = chatCharMultiplier * chatCharPoints;
-    	
-    	Double final_points = plugin.config.chatPoints + chatCharPoints;
+    	final Double points = plugin.getMultiplier(event.getPlayer(), "chat_char") 
+    	    * event.getMessage().length() * plugin.config.chatCharPoints;
         
-    	plugin.addActivity(playerName, final_points);
+    	plugin.addActivity(playerName, points + plugin.config.chatPoints);
     	
     	// Tracking
-    	plugin.chatCharPointsGiven += chatCharPoints;
+    	plugin.chatCharPointsGiven += points;
     	plugin.chatPointsGiven += plugin.config.chatPoints;
     	
     }
@@ -86,21 +78,17 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     @Override
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
     	
-    	String playerName = event.getPlayer().getName();
+    	final String playerName = event.getPlayer().getName();
     	
-    	Double commandCharPoints = event.getMessage().length() * plugin.config.commandCharPoints;
-    	Double commandCharMultiplier = HeavenActivity.Permissions.getPermissionDouble(
-    			event.getPlayer().getWorld().getName(), playerName, "activity.multiplier.command_char");
-    	if (commandCharMultiplier == -1.0) commandCharMultiplier = 1.0;
-    	commandCharPoints = commandCharMultiplier * commandCharPoints;
-    	
-    	Double final_points = plugin.config.commandPoints + commandCharPoints;
-    	plugin.addActivity(playerName, final_points);
+    	final Double points = plugin.getMultiplier(event.getPlayer(), "command_char") 
+    	    * event.getMessage().length() * plugin.config.commandCharPoints;
+
+    	plugin.addActivity(playerName, points + plugin.config.commandPoints);
     	
     	//HeavenActivity.logger.info("[cmd] " + event.getPlayer().getName() + ": " + event.getMessage());
     	
     	// Tracking
-    	plugin.commandCharPointsGiven += commandCharPoints;
+    	plugin.commandCharPointsGiven += points;
     	plugin.commandPointsGiven += plugin.config.commandPoints;
     	
     }

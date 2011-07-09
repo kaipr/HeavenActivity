@@ -28,14 +28,11 @@ public class HeavenActivityBlockListener extends BlockListener {
     	if (event.isCancelled())
     		return;
     	
-    	long time = System.currentTimeMillis();
-        String playerName = event.getPlayer().getName();
+    	final long time = System.currentTimeMillis();
+        final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {
-        	Double multiplier = HeavenActivity.Permissions.getPermissionDouble(
-        			event.getPlayer().getWorld().getName(), playerName, "activity.multiplier.block_place");
-        	if (multiplier == -1.0) multiplier = 1.0;
-        	Double points = multiplier * plugin.config.blockPlacePoints;
+        	final Double points = plugin.getMultiplier(event.getPlayer(), "block_place") * plugin.config.blockPlacePoints;
         	
         	plugin.addActivity(playerName, points);
         	
@@ -53,14 +50,11 @@ public class HeavenActivityBlockListener extends BlockListener {
     	if (event.isCancelled())
     		return;
     	
-    	long time = System.currentTimeMillis();
-        String playerName = event.getPlayer().getName();
+    	final long time = System.currentTimeMillis();
+        final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {
-        	Double multiplier = HeavenActivity.Permissions.getPermissionDouble(
-        			event.getPlayer().getWorld().getName(), playerName, "activity.multiplier.block_break");
-        	if (multiplier == -1.0) multiplier = 1.0;
-        	Double points = multiplier * plugin.config.blockBreakPoints;
+        	Double points = plugin.getMultiplier(event.getPlayer(), "block_break") * plugin.config.blockBreakPoints;
         	
         	plugin.addActivity(playerName, points);
         	
