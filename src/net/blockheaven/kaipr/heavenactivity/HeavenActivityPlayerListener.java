@@ -30,9 +30,9 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     		return;
     	
     	// Ignore jumping and driving
-        if (event.getTo().getY() > event.getFrom().getY() 
-        		|| event.getTo().getY() < event.getFrom().getY()
-        		|| event.getPlayer().isInsideVehicle())
+        if (event.getPlayer().isInsideVehicle() 
+        		|| (event.getTo().getX() == event.getFrom().getX() 
+        		|| event.getTo().getZ() == event.getFrom().getZ()))
             return;
         
         final long time = System.currentTimeMillis();
