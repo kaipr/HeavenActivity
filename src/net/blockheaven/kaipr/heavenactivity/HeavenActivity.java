@@ -361,7 +361,7 @@ public class HeavenActivity extends JavaPlugin {
     	
     	for (Player player : getServer().getOnlinePlayers()) {
         	int activity = getActivity(player);
-        	if (activity == 0) {
+        	if ((int)activity < config.incomeMinActivity) {
         		sendMessage(player, ChatColor.RED + "You were too lazy, no income for you this time!");
         	} else {
 				Holdings balance = iConomy.getAccount(player.getName()).getHoldings();

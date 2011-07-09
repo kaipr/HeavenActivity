@@ -34,6 +34,7 @@ public class HeavenActivityConfig {
     public Double blockPlacePoints;
     public Double blockBreakPoints;
     public boolean incomeEnabled;
+    public int incomeMinActivity;
     public Double incomeBaseValue;
     public int incomeTargetActivity;
     public int incomeActivityModifier;
@@ -60,6 +61,7 @@ public class HeavenActivityConfig {
         pointMultiplier               = config.getDouble("general.point_multiplier", 1.0);
         
         incomeEnabled                 = config.getBoolean("income.enabled", true);
+        incomeMinActivity             = config.getInt("income.min_activity", 1);
         incomeBaseValue               = config.getDouble("income.base_value", 8);
         incomeTargetActivity          = config.getInt("income.target_activity", 50);
         incomeActivityModifier        = config.getInt("income.activity_modifier", 75);

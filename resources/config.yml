@@ -15,6 +15,8 @@ general:
 income:
     # iConomy income enabled?
     enabled: true
+    # Minimum activity to get income
+    min_activity: 1
     # Multiplies the current balance of the players and adds/subtracts it to/from the income
     balance_multiplier: 0.0
     # How much the activity affects the income, less is more (read documentation!)
