@@ -17,6 +17,8 @@ income:
     enabled: true
     # Minimum activity to get income
     min_activity: 1
+    # Allow negative income? (e.g. because of a negative balance_multiplier)
+    allow_negative: true
     # Multiplies the current balance of the players and adds/subtracts it to/from the income
     balance_multiplier: 0.0
     # How much the activity affects the income, less is more (read documentation!)

@@ -392,23 +392,28 @@ public class HeavenActivity extends JavaPlugin {
     	}
     	
     	for (Player player : getServer().getOnlinePlayers()) {
-        	int activity = getActivity(player);
-        	if ((int)activity < config.incomeMinActivity) {
-        		sendMessage(player, ChatColor.RED + "You were too lazy, no income for you this time!");
-        	} else {
+        	final int activity = getActivity(player);
+        	if ((int)activity >= config.incomeMinActivity) {
 				Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
                 
 				Double amount = config.incomeBaseValue 
                   + (((double)(activity - config.incomeTargetActivity) / (double)config.incomeActivityModifier) * config.incomeBaseValue)
                   + (balance.balance() * config.incomeBalanceMultiplier);
-                balance.add(amount);
                 
-                sendMessage(player, "You got " + activityColor(activity) + iConomy.format(amount) 
+				if (amount > 0.0 || config.incomeAllowNegative) {
+				    balance.add(amount);
+                
+                    sendMessage(player, "You got " + activityColor(activity) + iConomy.format(amount) 
                 		+ ChatColor.GRAY + " income for being " 
                 		+ activityColor(activity) + activity + "% " + ChatColor.GRAY + "active.");
-                sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
+                    sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
                 		+ iConomy.format(balance.balance()));
+                    
+                    return;
+				}
         	}
+        	
+        	sendMessage(player, ChatColor.RED + "You were too lazy, no income for you this time!");
         }
     	
     }
