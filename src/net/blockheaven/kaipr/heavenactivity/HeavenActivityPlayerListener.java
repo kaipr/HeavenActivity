@@ -85,7 +85,9 @@ public class HeavenActivityPlayerListener extends PlayerListener {
 
     	plugin.addActivity(playerName, points + plugin.config.commandPoints);
     	
-    	//HeavenActivity.logger.info("[cmd] " + event.getPlayer().getName() + ": " + event.getMessage());
+    	if (plugin.config.logCommands) {
+    	    HeavenActivity.logger.info("[cmd] " + event.getPlayer().getName() + ": " + event.getMessage());
+    	}
     	
     	// Tracking
     	plugin.commandCharPointsGiven += points;

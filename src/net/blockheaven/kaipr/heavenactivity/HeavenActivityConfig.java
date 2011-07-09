@@ -38,6 +38,7 @@ public class HeavenActivityConfig {
     public int incomeTargetActivity;
     public int incomeActivityModifier;
     public Double incomeBalanceMultiplier;
+    public boolean logCommands;
 	
     
 	public HeavenActivityConfig(HeavenActivity plugin) {
@@ -73,6 +74,8 @@ public class HeavenActivityConfig {
         blockDelay                    = config.getInt("block.delay", 950);
         blockPlacePoints              = config.getDouble("block.place_points", 3.75);
         blockBreakPoints              = config.getDouble("block.break_points", 1.95);
+        
+        logCommands                   = config.getBoolean("general.log_commands", false);
         
         plugin.chatPointsGiven        = config.getDouble("stats.chat_points", 0.0);
         plugin.chatCharPointsGiven    = config.getDouble("stats.chat_char_points", 0.0);
