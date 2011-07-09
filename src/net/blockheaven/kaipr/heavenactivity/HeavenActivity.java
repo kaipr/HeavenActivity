@@ -342,8 +342,7 @@ public class HeavenActivity extends JavaPlugin {
                 if (currentSequence % config.notificationSequence == 0) {
                 	for (Player player : getServer().getOnlinePlayers()) {
                     	int activity = getActivity(player.getName());
-                		player.sendMessage(ChatColor.DARK_GRAY + "[Activity] " + ChatColor.GRAY 
-                				+ "Your current activity is: " 
+                		sendMessage(player, "Your current activity is: " 
                 				+ activityColor(activity) + activity + "%");
                     }
                 }
