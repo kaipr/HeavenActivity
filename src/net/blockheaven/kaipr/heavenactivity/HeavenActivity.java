@@ -121,7 +121,7 @@ public class HeavenActivity extends JavaPlugin {
     		int activity = getActivity((Player) sender);
     		sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
     	} else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
-    		if (sender.isOp() || Permissions.has((Player)sender, "activity.view.list")) {
+    		if (hasPermission(sender, "activity.view.list", true)) {
     			StringBuilder res = new StringBuilder();
     			for (Player player : getServer().getOnlinePlayers()) {
     			    int activity = getActivity(player);
@@ -132,8 +132,7 @@ public class HeavenActivity extends JavaPlugin {
     		} else {
     			sendMessage(sender, ChatColor.RED + "You have no permission to see a list of online players' activity.");
     		}
-    	} else if (args[0].compareToIgnoreCase("admin") == 0 && 
-    			(sender.isOp() || Permissions.has((Player)sender, "activity.admin"))) {
+    	} else if (args[0].compareToIgnoreCase("admin") == 0 && hasPermission(sender, "activity.admin", false)) {
     	    if (args.length == 1) {
     	    	sendMessage(sender, ChatColor.RED + "/activity admin <reload|stats|resetstats>");
     	    } else if (args[1].compareToIgnoreCase("reload") == 0) {
@@ -169,7 +168,7 @@ public class HeavenActivity extends JavaPlugin {
         		sendMessage(sender, ChatColor.RED + "Stats reseted");
         	}
     	} else if (args.length == 1) {
-    		if (sender.isOp() || Permissions.has((Player)sender, "activity.view.other")) {
+    		if (hasPermission(sender, "activity.view.other", true)) {
     		   String playerName = matchSinglePlayer(sender, args[0]).getName();
     		   int activity = getActivity(playerName);
     		   sendMessage(sender, "Current activity of " + playerName + ": " + activityColor(activity) + activity + "%");
@@ -183,6 +182,37 @@ public class HeavenActivity extends JavaPlugin {
     }
     
     /**
+     * Checks permission for a CommandSender, OP defaults to true
+     * 
+     * @param player
+     * @param node
+     * @param noPermissionsReturn return value if permissions plugin isn't active
+     * @return
+     */
+    public boolean hasPermission(CommandSender sender, String node, boolean noPermissionsReturn) {
+    	return hasPermission((Player)sender, node, noPermissionsReturn);
+    }
+    
+    /**
+     * Checks permission for a Player, OP defaults to true
+     * 
+     * @param player
+     * @param node
+     * @param noPermissionsReturn return value if permissions plugin isn't active
+     * @return
+     */
+    public boolean hasPermission(Player player, String node, boolean noPermissionsReturn) {
+    	if (player.isOp())
+    		return true;
+    	
+        if (Permissions != null) {
+        	return Permissions.has(player, node);
+        } else {
+        	return noPermissionsReturn;
+        }
+    }
+    
+    /**
      * Returns the individual multiplier for a player
      * 
      * @param player
@@ -190,7 +220,10 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public double getMultiplier(Player player, String which) {
-        final double multiplier = Permissions.getPermissionDouble(
+        if (Permissions == null)
+        	return 1.0;
+        
+    	final double multiplier = Permissions.getPermissionDouble(
     			player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
         if (multiplier == -1.0) {
         	return 1.0;
