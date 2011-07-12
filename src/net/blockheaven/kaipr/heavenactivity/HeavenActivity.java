@@ -414,7 +414,7 @@ public class HeavenActivity extends JavaPlugin {
                     sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
                 		+ iConomy.format(balance.balance()));
                     
-                    return;
+                    continue;
 				}
         	}
         	
