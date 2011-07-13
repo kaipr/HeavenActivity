@@ -78,6 +78,9 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     @Override
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         
+        if (event.isCancelled())
+            return;
+        
         final String playerName = event.getPlayer().getName();
         
         if (plugin.config.commandTracking) {
