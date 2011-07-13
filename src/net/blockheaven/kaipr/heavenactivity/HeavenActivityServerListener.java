@@ -26,6 +26,7 @@ public class HeavenActivityServerListener extends ServerListener {
         	if (permissions != null) {
         		if (permissions.isEnabled()) {
         			HeavenActivity.Permissions = ((Permissions)permissions).getHandler();
+        			HeavenActivity.permissionsVersion = Integer.parseInt(permissions.getDescription().getVersion().substring(0, 1));
         			HeavenActivity.logger.info("[HeavenActivity] hooked into Permissions");
         		}
         	}

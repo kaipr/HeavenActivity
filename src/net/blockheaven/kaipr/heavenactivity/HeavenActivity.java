@@ -41,6 +41,11 @@ public class HeavenActivity extends JavaPlugin {
     public static PermissionHandler Permissions;
     
     /**
+     * Permissions plugin version
+     */
+    public static int permissionsVersion;
+    
+    /**
      * iConomy hook
      */
     public static iConomy iConomy;
@@ -224,17 +229,19 @@ public class HeavenActivity extends JavaPlugin {
      * @param which
      * @return
      */
-    public double getMultiplier(Player player, String which) {
+    public Double getMultiplier(Player player, String which) {
         if (Permissions == null)
-        	return 1.0;
+        	return null;
         
-    	final double multiplier = Permissions.getPermissionDouble(
-    			player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
-        if (multiplier == -1.0) {
-        	return 1.0;
-        } else {
-        	return multiplier;
-        }
+    	if (permissionsVersion < 3) {
+    		final double multiplier = Permissions.getPermissionDouble(
+    			    player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
+            return multiplier == -1.0 ? 1.0 : multiplier;
+    	} else {
+            final Double multiplier = Permissions.getInfoDouble(
+            		player.getWorld().getName(), player.getName(), "activity.multiplier." + which, false);
+    		return multiplier == null ? 1.0 : multiplier;
+    	}
     }
     
     /**
