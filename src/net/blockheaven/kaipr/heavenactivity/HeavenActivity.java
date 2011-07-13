@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -122,13 +123,12 @@ public class HeavenActivity extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd,
             String commandLabel, String[] args) {
     	
-    	if (!(sender instanceof Player) && args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "[Activity] Activity is only tracked for players!");
-    		return false;
-        }
-    	
     	if (args.length == 0) {
-    		int activity = getActivity((Player) sender);
+    		if (!(sender instanceof Player)) {
+    			sender.sendMessage(ChatColor.RED + "[Activity] Activity is only tracked for players!");
+        		return false;
+    		}
+    		final int activity = getActivity((Player) sender);
     		sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
     	} else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
     		if (hasPermission(sender, "activity.view.list", true)) {
@@ -200,6 +200,8 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public boolean hasPermission(CommandSender sender, String node, boolean noPermissionsReturn) {
+    	if (sender instanceof ConsoleCommandSender)
+    		return true;
     	return hasPermission((Player)sender, node, noPermissionsReturn);
     }
     
