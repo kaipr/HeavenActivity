@@ -26,7 +26,7 @@ import com.nijiko.permissions.PermissionHandler;
 
 
 public class HeavenActivity extends JavaPlugin {
-	/**
+    /**
      * Logger for messages.
      */
     protected static final Logger logger = Logger.getLogger("Minecraft.HeavenActivity");
@@ -82,7 +82,7 @@ public class HeavenActivity extends JavaPlugin {
      */
     public void onEnable() {
         
-    	logger.info(getDescription().getName() + " "
+        logger.info(getDescription().getName() + " "
                 + getDescription().getVersion() + " enabled.");
         
         config = new HeavenActivityConfig(this);
@@ -113,8 +113,8 @@ public class HeavenActivity extends JavaPlugin {
      * Called when the plugin gets disabled, disable timers and save stats
      */
     public void onDisable() {
-    	config.reloadAndSave();
-    	stopUpdateTimer();
+        config.reloadAndSave();
+        stopUpdateTimer();
     }
     
     /**
@@ -122,73 +122,73 @@ public class HeavenActivity extends JavaPlugin {
      */
     public boolean onCommand(CommandSender sender, Command cmd,
             String commandLabel, String[] args) {
-    	
-    	if (args.length == 0) {
-    		if (!(sender instanceof Player)) {
-    			sender.sendMessage(ChatColor.RED + "[Activity] Activity is only tracked for players!");
-        		return false;
-    		}
-    		final int activity = getActivity((Player) sender);
-    		sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
-    	} else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
-    		if (hasPermission(sender, "activity.view.list", true)) {
-    			StringBuilder res = new StringBuilder();
-    			for (Player player : getServer().getOnlinePlayers()) {
-    			    int activity = getActivity(player);
-    			    res.append(activityColor(activity) + player.getName() + " " + activity + "%");
-    			    res.append(ChatColor.GRAY + ", ");
-    		    }
-    		    sendMessage(sender, res.substring(0, res.length() - 2));
-    		} else {
-    			sendMessage(sender, ChatColor.RED + "You have no permission to see a list of online players' activity.");
-    		}
-    	} else if (args[0].compareToIgnoreCase("admin") == 0 && hasPermission(sender, "activity.admin", false)) {
-    	    if (args.length == 1) {
-    	    	sendMessage(sender, ChatColor.RED + "/activity admin <reload|stats|resetstats>");
-    	    } else if (args[1].compareToIgnoreCase("reload") == 0) {
-        		config.reloadAndSave();
-        		config.load();
-        		stopUpdateTimer();
-        		startUpdateTimer();
-        		sendMessage(sender, ChatColor.GREEN + "Reloaded");
-        	} else if (args[1].compareToIgnoreCase("stats") == 0) {
-        		sendMessage(sender, ChatColor.YELLOW + "Statistic " + ChatColor.DARK_GRAY + "--------------------");
-        		sendMessage(sender, "Chat: " + ChatColor.WHITE 
-        				+ this.chatPointsGiven.intValue());
-        		sendMessage(sender, "Chat char: " + ChatColor.WHITE 
-        				+ this.chatCharPointsGiven.intValue());
-        		sendMessage(sender, "Command: " + ChatColor.WHITE
-        				+ this.commandPointsGiven.intValue());
-        		sendMessage(sender, "Command char: " + ChatColor.WHITE
-        				+ this.commandCharPointsGiven.intValue());
-        		sendMessage(sender, "Move: " + ChatColor.WHITE
-        				+ this.movePointsGiven.intValue());
-        		sendMessage(sender, "Block place: " + ChatColor.WHITE
-        				+ this.blockPlacePointsGiven.intValue());
-        		sendMessage(sender, "Block break: " + ChatColor.WHITE
-        				+ this.blockBreakPointsGiven.intValue());
-        	} else if (args[1].compareToIgnoreCase("resetstats") == 0) {
-        		this.chatPointsGiven = 0.0;
-        		this.chatCharPointsGiven = 0.0;
-        		this.commandPointsGiven = 0.0;
-        		this.commandCharPointsGiven = 0.0;
-        		this.movePointsGiven = 0.0;
-        		this.blockPlacePointsGiven = 0.0;
-        		this.blockBreakPointsGiven = 0.0;
-        		sendMessage(sender, ChatColor.RED + "Stats reseted");
-        	}
-    	} else if (args.length == 1) {
-    		if (hasPermission(sender, "activity.view.other", true)) {
-    		   String playerName = matchSinglePlayer(sender, args[0]).getName();
-    		   int activity = getActivity(playerName);
-    		   sendMessage(sender, "Current activity of " + playerName + ": " + activityColor(activity) + activity + "%");
-    		} else {
-    			sendMessage(sender, ChatColor.RED + "You have no permission to see other's activity.");
-    		}
-    	}
-    		
-    	return true;
-    	
+        
+        if (args.length == 0) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(ChatColor.RED + "[Activity] Activity is only tracked for players!");
+                return false;
+            }
+            final int activity = getActivity((Player) sender);
+            sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
+        } else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
+            if (hasPermission(sender, "activity.view.list", true)) {
+                StringBuilder res = new StringBuilder();
+                for (Player player : getServer().getOnlinePlayers()) {
+                    int activity = getActivity(player);
+                    res.append(activityColor(activity) + player.getName() + " " + activity + "%");
+                    res.append(ChatColor.GRAY + ", ");
+                }
+                sendMessage(sender, res.substring(0, res.length() - 2));
+            } else {
+                sendMessage(sender, ChatColor.RED + "You have no permission to see a list of online players' activity.");
+            }
+        } else if (args[0].compareToIgnoreCase("admin") == 0 && hasPermission(sender, "activity.admin", false)) {
+            if (args.length == 1) {
+                sendMessage(sender, ChatColor.RED + "/activity admin <reload|stats|resetstats>");
+            } else if (args[1].compareToIgnoreCase("reload") == 0) {
+                config.reloadAndSave();
+                config.load();
+                stopUpdateTimer();
+                startUpdateTimer();
+                sendMessage(sender, ChatColor.GREEN + "Reloaded");
+            } else if (args[1].compareToIgnoreCase("stats") == 0) {
+                sendMessage(sender, ChatColor.YELLOW + "Statistic " + ChatColor.DARK_GRAY + "--------------------");
+                sendMessage(sender, "Chat: " + ChatColor.WHITE 
+                        + this.chatPointsGiven.intValue());
+                sendMessage(sender, "Chat char: " + ChatColor.WHITE 
+                        + this.chatCharPointsGiven.intValue());
+                sendMessage(sender, "Command: " + ChatColor.WHITE
+                        + this.commandPointsGiven.intValue());
+                sendMessage(sender, "Command char: " + ChatColor.WHITE
+                        + this.commandCharPointsGiven.intValue());
+                sendMessage(sender, "Move: " + ChatColor.WHITE
+                        + this.movePointsGiven.intValue());
+                sendMessage(sender, "Block place: " + ChatColor.WHITE
+                        + this.blockPlacePointsGiven.intValue());
+                sendMessage(sender, "Block break: " + ChatColor.WHITE
+                        + this.blockBreakPointsGiven.intValue());
+            } else if (args[1].compareToIgnoreCase("resetstats") == 0) {
+                this.chatPointsGiven = 0.0;
+                this.chatCharPointsGiven = 0.0;
+                this.commandPointsGiven = 0.0;
+                this.commandCharPointsGiven = 0.0;
+                this.movePointsGiven = 0.0;
+                this.blockPlacePointsGiven = 0.0;
+                this.blockBreakPointsGiven = 0.0;
+                sendMessage(sender, ChatColor.RED + "Stats reseted");
+            }
+        } else if (args.length == 1) {
+            if (hasPermission(sender, "activity.view.other", true)) {
+               String playerName = matchSinglePlayer(sender, args[0]).getName();
+               int activity = getActivity(playerName);
+               sendMessage(sender, "Current activity of " + playerName + ": " + activityColor(activity) + activity + "%");
+            } else {
+                sendMessage(sender, ChatColor.RED + "You have no permission to see other's activity.");
+            }
+        }
+            
+        return true;
+        
     }
     
     /**
@@ -200,9 +200,9 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public boolean hasPermission(CommandSender sender, String node, boolean noPermissionsReturn) {
-    	if (sender instanceof ConsoleCommandSender)
-    		return true;
-    	return hasPermission((Player)sender, node, noPermissionsReturn);
+        if (sender instanceof ConsoleCommandSender)
+            return true;
+        return hasPermission((Player)sender, node, noPermissionsReturn);
     }
     
     /**
@@ -214,13 +214,13 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public boolean hasPermission(Player player, String node, boolean noPermissionsReturn) {
-    	if (player.isOp())
-    		return true;
-    	
+        if (player.isOp())
+            return true;
+        
         if (Permissions != null) {
-        	return Permissions.has(player, node);
+            return Permissions.has(player, node);
         } else {
-        	return noPermissionsReturn;
+            return noPermissionsReturn;
         }
     }
     
@@ -233,17 +233,17 @@ public class HeavenActivity extends JavaPlugin {
      */
     public Double getMultiplier(Player player, String which) {
         if (Permissions == null)
-        	return null;
+            return null;
         
-    	if (permissionsVersion < 3) {
-    		final double multiplier = Permissions.getPermissionDouble(
-    			    player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
+        if (permissionsVersion < 3) {
+            final double multiplier = Permissions.getPermissionDouble(
+                    player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
             return multiplier == -1.0 ? 1.0 : multiplier;
-    	} else {
+        } else {
             final Double multiplier = Permissions.getInfoDouble(
-            		player.getWorld().getName(), player.getName(), "activity.multiplier." + which, false);
-    		return multiplier == null ? 1.0 : multiplier;
-    	}
+                    player.getWorld().getName(), player.getName(), "activity.multiplier." + which, false);
+            return multiplier == null ? 1.0 : multiplier;
+        }
     }
     
     /**
@@ -253,15 +253,15 @@ public class HeavenActivity extends JavaPlugin {
      * @param activity
      */
     public void addActivity(String playerName, Double activity) {
-    	
-    	activity = config.pointMultiplier * activity;
-    	playerName = playerName.toLowerCase();
-    	if (playersActivities.get(this.currentSequence).containsKey(playerName)) {
-    		activity += playersActivities.get(this.currentSequence).get(playerName);
-    	}
-    	
-    	playersActivities.get(this.currentSequence).put(playerName, activity);
-    	
+        
+        activity = config.pointMultiplier * activity;
+        playerName = playerName.toLowerCase();
+        if (playersActivities.get(this.currentSequence).containsKey(playerName)) {
+            activity += playersActivities.get(this.currentSequence).get(playerName);
+        }
+        
+        playersActivities.get(this.currentSequence).put(playerName, activity);
+        
     }
     
     /**
@@ -271,7 +271,7 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public int getActivity(Player player) {
-    	return getActivity(player.getName());
+        return getActivity(player.getName());
     }
     
     /**
@@ -281,23 +281,23 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public int getActivity(String playerName) {
-    	
-    	playerName = playerName.toLowerCase();
-    	
-    	Iterator<Map<String, Double>> iterator = playersActivities.values().iterator();
-    	
-    	Double rawActivity = 0.0;
-    	while (iterator.hasNext()) {
-    		Map<String, Double> playersActivity = iterator.next();
-    		if (playersActivity.containsKey(playerName)) {
-    			rawActivity += playersActivity.get(playerName);
-    		}
-    	}
-    	
-    	int activity = (int)(rawActivity / playersActivities.size());
-    	if (activity > 100) activity = 100;
-    	
-    	return activity;
+        
+        playerName = playerName.toLowerCase();
+        
+        Iterator<Map<String, Double>> iterator = playersActivities.values().iterator();
+        
+        Double rawActivity = 0.0;
+        while (iterator.hasNext()) {
+            Map<String, Double> playersActivity = iterator.next();
+            if (playersActivity.containsKey(playerName)) {
+                rawActivity += playersActivity.get(playerName);
+            }
+        }
+        
+        int activity = (int)(rawActivity / playersActivities.size());
+        if (activity > 100) activity = 100;
+        
+        return activity;
     
     }
     
@@ -308,7 +308,7 @@ public class HeavenActivity extends JavaPlugin {
      * @param message
      */
     public void sendMessage(CommandSender sender, String message) {
-    	sender.sendMessage(ChatColor.DARK_GRAY + "[Activity] " + ChatColor.GRAY + message);
+        sender.sendMessage(ChatColor.DARK_GRAY + "[Activity] " + ChatColor.GRAY + message);
     }
     
     /**
@@ -318,7 +318,7 @@ public class HeavenActivity extends JavaPlugin {
      * @param message
      */
     public void sendMessage(Player player, String message) {
-    	player.sendMessage(ChatColor.DARK_GRAY + "[Activity] " + ChatColor.GRAY + message);
+        player.sendMessage(ChatColor.DARK_GRAY + "[Activity] " + ChatColor.GRAY + message);
     }
     
     /**
@@ -329,54 +329,54 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public Player matchSinglePlayer(CommandSender sender, String filter) {
-    	
-    	filter = filter.toLowerCase();
-    	for (Player player : getServer().getOnlinePlayers()) {
-    		if (player.getName().toLowerCase().contains(filter)) {
-    			return player;
-    		}
-    	}
-    	
-    	sender.sendMessage(ChatColor.RED + "No matching player found, matching yourself.");
-    	return (Player) sender;
-    	
+        
+        filter = filter.toLowerCase();
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (player.getName().toLowerCase().contains(filter)) {
+                return player;
+            }
+        }
+        
+        sender.sendMessage(ChatColor.RED + "No matching player found, matching yourself.");
+        return (Player) sender;
+        
     }
     
     /**
      * Initializes and starts the update timer
      */
     protected void startUpdateTimer() {
-    	
-    	updateTimer = new Timer();
+        
+        updateTimer = new Timer();
         updateTimer.scheduleAtFixedRate(new TimerTask() {
             
-        	public void run() {
-        		
+            public void run() {
+                
                 // Give players info
                 if (currentSequence % config.notificationSequence == 0) {
-                	for (Player player : getServer().getOnlinePlayers()) {
-                    	int activity = getActivity(player.getName());
-                		sendMessage(player, "Your current activity is: " 
-                				+ activityColor(activity) + activity + "%");
+                    for (Player player : getServer().getOnlinePlayers()) {
+                        int activity = getActivity(player.getName());
+                        sendMessage(player, "Your current activity is: " 
+                                + activityColor(activity) + activity + "%");
                     }
                 }
                 
                 // Handle income
                 if (currentSequence % config.incomeSequence == 0 && config.incomeEnabled) {
-                	handleOnlineIncome();
+                    handleOnlineIncome();
                 }
                 
                 int nextSequence;
-        		if (currentSequence == config.maxSequences) {
-        			nextSequence = 1;
-        		} else {
-        			nextSequence = currentSequence + 1;
-        		}
+                if (currentSequence == config.maxSequences) {
+                    nextSequence = 1;
+                } else {
+                    nextSequence = currentSequence + 1;
+                }
                 
                 playersActivities.put(nextSequence, new HashMap<String, Double>());
                 currentSequence = nextSequence;
             }
-        	
+            
         }, 0, (config.sequenceInterval * 1000L));
         
         logger.info("[HeavenActivity] Update timer started");
@@ -387,8 +387,8 @@ public class HeavenActivity extends JavaPlugin {
      * Stops the update timer
      */
     protected void stopUpdateTimer() {
-    	updateTimer.cancel();
-    	logger.info("[HeavenActivity] Update timer stopped");
+        updateTimer.cancel();
+        logger.info("[HeavenActivity] Update timer stopped");
     }
 
     /**
@@ -396,52 +396,52 @@ public class HeavenActivity extends JavaPlugin {
      */
     @SuppressWarnings("static-access")
     protected void handleOnlineIncome() {
-    	
-    	if (playersActivities.size() == 0)
-    		return;
-    	
-    	if (iConomy == null) {
-    		logger.warning("[HeavenActivity] Want to give income, but iConomy isn't active! Skipping...");
-    		return;
-    	}
-    	
-    	for (Player player : getServer().getOnlinePlayers()) {
-        	final int activity = getActivity(player);
-        	if ((int)activity >= config.incomeMinActivity) {
-				Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
+        
+        if (playersActivities.size() == 0)
+            return;
+        
+        if (iConomy == null) {
+            logger.warning("[HeavenActivity] Want to give income, but iConomy isn't active! Skipping...");
+            return;
+        }
+        
+        for (Player player : getServer().getOnlinePlayers()) {
+            final int activity = getActivity(player);
+            if ((int)activity >= config.incomeMinActivity) {
+                Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
                 
-				Double amount = config.incomeBaseValue 
+                Double amount = config.incomeBaseValue 
                   + (((double)(activity - config.incomeTargetActivity) / (double)config.incomeActivityModifier) * config.incomeBaseValue)
                   + (balance.balance() * config.incomeBalanceMultiplier);
                 
-				if (amount > 0.0 || config.incomeAllowNegative) {
-				    balance.add(amount);
+                if (amount > 0.0 || config.incomeAllowNegative) {
+                    balance.add(amount);
                 
                     sendMessage(player, "You got " + activityColor(activity) + iConomy.format(amount) 
-                		+ ChatColor.GRAY + " income for being " 
-                		+ activityColor(activity) + activity + "% " + ChatColor.GRAY + "active.");
+                        + ChatColor.GRAY + " income for being " 
+                        + activityColor(activity) + activity + "% " + ChatColor.GRAY + "active.");
                     sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
-                		+ iConomy.format(balance.balance()));
+                        + iConomy.format(balance.balance()));
                     
                     continue;
-				}
-        	}
-        	
-        	sendMessage(player, ChatColor.RED + "You were too lazy, no income for you this time!");
+                }
+            }
+            
+            sendMessage(player, ChatColor.RED + "You were too lazy, no income for you this time!");
         }
-    	
+        
     }
     
     protected ChatColor activityColor(int activity) {
-    	
-    	if (activity > 75) {
-    		return ChatColor.GREEN;
-    	} else if (activity < 25) {
-    		return ChatColor.RED;
-    	} else {
-    		return ChatColor.YELLOW;
-    	}
-    	
+        
+        if (activity > 75) {
+            return ChatColor.GREEN;
+        } else if (activity < 25) {
+            return ChatColor.RED;
+        } else {
+            return ChatColor.YELLOW;
+        }
+        
     }
 
 }

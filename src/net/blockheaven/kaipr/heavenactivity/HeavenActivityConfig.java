@@ -6,23 +6,23 @@ import org.bukkit.util.config.Configuration;
 
 public class HeavenActivityConfig {
 
-	/**
-	 * Plugin reference
-	 */
-	protected HeavenActivity plugin;
-	
-	/**
-	 * Configuration object
-	 */
-	protected Configuration config;
-	
-	/**
+    /**
+     * Plugin reference
+     */
+    protected HeavenActivity plugin;
+    
+    /**
+     * Configuration object
+     */
+    protected Configuration config;
+    
+    /**
      * Configuration values
      */
-	public int maxSequences;
-	public int sequenceInterval;
-	public int notificationSequence;
-	public int incomeSequence;
+    public int maxSequences;
+    public int sequenceInterval;
+    public int notificationSequence;
+    public int incomeSequence;
     public Double pointMultiplier;
     public boolean chatTracking;
     public Double chatPoints;
@@ -45,17 +45,17 @@ public class HeavenActivityConfig {
     public int incomeActivityModifier;
     public Double incomeBalanceMultiplier;
     public boolean logCommands;
-	
     
-	public HeavenActivityConfig(HeavenActivity plugin) {
-		this.plugin = plugin;
-		
+    
+    public HeavenActivityConfig(HeavenActivity plugin) {
+        this.plugin = plugin;
+        
         plugin.getDataFolder().mkdirs();
         config = plugin.getConfiguration();
         
         load();
-	}
-	
+    }
+    
     public void load() {
         config.load();
         
@@ -97,44 +97,44 @@ public class HeavenActivityConfig {
         plugin.blockPlacePointsGiven  = config.getDouble("stats.block_place_points", 0.0);
         plugin.blockBreakPointsGiven  = config.getDouble("stats.block_break_points", 0.0);
     }
-	
-	public void reloadAndSave() {
-		config.load();
-		
-		List<String> configNodes;
-		
-		configNodes = config.getKeys("general");
-		if (!configNodes.contains("max_sequences"))
-		    config.setProperty("general.max_sequences", maxSequences);
-		if (!configNodes.contains("sequence_interval"))
-		    config.setProperty("general.sequence_interval", sequenceInterval);
-		if (!configNodes.contains("notification_sequence"))
-		    config.setProperty("general.notification_sequence", notificationSequence);
-		if (!configNodes.contains("income_sequence"))
-		    config.setProperty("general.income_sequence", incomeSequence);
-		if (!configNodes.contains("point_multiplier"))
-		    config.setProperty("general.point_multiplier", pointMultiplier);
-		
-		configNodes = config.getKeys("income");
-		if (!configNodes.contains("enabled"))
-		    config.setProperty("income.enabled", incomeEnabled);
-		if (!configNodes.contains("base_value"))
-		    config.setProperty("income.base_value", incomeBaseValue);
-		if (!configNodes.contains("target_activity"))
-		    config.setProperty("income.target_activity", incomeTargetActivity);
-		if (!configNodes.contains("activity_modifier"))
-		    config.setProperty("income.activity_modifier", incomeActivityModifier);
-		if (!configNodes.contains("balance_multiplier"))
-	        config.setProperty("income.balance_multiplier", incomeBalanceMultiplier);
-		
-		config.setProperty("stats.chat_points", plugin.chatPointsGiven);
-    	config.setProperty("stats.chat_char_points", plugin.chatCharPointsGiven);
-    	config.setProperty("stats.command_points", plugin.commandPointsGiven);
-    	config.setProperty("stats.command_char_points", plugin.commandCharPointsGiven);
-    	config.setProperty("stats.move_points", plugin.movePointsGiven);
-    	config.setProperty("stats.block_place_points", plugin.blockPlacePointsGiven);
-    	config.setProperty("stats.block_break_points", plugin.blockBreakPointsGiven);
-    	
-    	config.save();
-	}
+    
+    public void reloadAndSave() {
+        config.load();
+        
+        List<String> configNodes;
+        
+        configNodes = config.getKeys("general");
+        if (!configNodes.contains("max_sequences"))
+            config.setProperty("general.max_sequences", maxSequences);
+        if (!configNodes.contains("sequence_interval"))
+            config.setProperty("general.sequence_interval", sequenceInterval);
+        if (!configNodes.contains("notification_sequence"))
+            config.setProperty("general.notification_sequence", notificationSequence);
+        if (!configNodes.contains("income_sequence"))
+            config.setProperty("general.income_sequence", incomeSequence);
+        if (!configNodes.contains("point_multiplier"))
+            config.setProperty("general.point_multiplier", pointMultiplier);
+        
+        configNodes = config.getKeys("income");
+        if (!configNodes.contains("enabled"))
+            config.setProperty("income.enabled", incomeEnabled);
+        if (!configNodes.contains("base_value"))
+            config.setProperty("income.base_value", incomeBaseValue);
+        if (!configNodes.contains("target_activity"))
+            config.setProperty("income.target_activity", incomeTargetActivity);
+        if (!configNodes.contains("activity_modifier"))
+            config.setProperty("income.activity_modifier", incomeActivityModifier);
+        if (!configNodes.contains("balance_multiplier"))
+            config.setProperty("income.balance_multiplier", incomeBalanceMultiplier);
+        
+        config.setProperty("stats.chat_points", plugin.chatPointsGiven);
+        config.setProperty("stats.chat_char_points", plugin.chatCharPointsGiven);
+        config.setProperty("stats.command_points", plugin.commandPointsGiven);
+        config.setProperty("stats.command_char_points", plugin.commandCharPointsGiven);
+        config.setProperty("stats.move_points", plugin.movePointsGiven);
+        config.setProperty("stats.block_place_points", plugin.blockPlacePointsGiven);
+        config.setProperty("stats.block_break_points", plugin.blockBreakPointsGiven);
+        
+        config.save();
+    }
 }
