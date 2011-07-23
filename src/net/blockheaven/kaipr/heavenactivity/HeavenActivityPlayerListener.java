@@ -54,7 +54,7 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
         
-        if (event.isCancelled())
+        if (event.isCancelled() && !plugin.config.chatTrackCancelled)
             return;
         
         final String playerName = event.getPlayer().getName();
@@ -78,7 +78,7 @@ public class HeavenActivityPlayerListener extends PlayerListener {
     @Override
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         
-        if (event.isCancelled())
+        if (event.isCancelled() && !plugin.config.commandTrackCancelled)
             return;
         
         final String playerName = event.getPlayer().getName();

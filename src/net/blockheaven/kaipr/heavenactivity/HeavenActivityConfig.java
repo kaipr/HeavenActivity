@@ -25,9 +25,11 @@ public class HeavenActivityConfig {
     public int incomeSequence;
     public Double pointMultiplier;
     public boolean chatTracking;
+    public boolean chatTrackCancelled;
     public Double chatPoints;
     public Double chatCharPoints;
     public boolean commandTracking;
+    public boolean commandTrackCancelled;
     public Double commandPoints;
     public Double commandCharPoints;
     public boolean moveTracking;
@@ -74,9 +76,11 @@ public class HeavenActivityConfig {
         incomeBalanceMultiplier       = config.getDouble("income.balance_multiplier", 0.0);
         
         chatTracking                  = config.getBoolean("chat.tracking", true);
+        chatTrackCancelled            = config.getBoolean("chat.track_cancelled", true);
         chatPoints                    = config.getDouble("chat.points", 1.0);
         chatCharPoints                = config.getDouble("chat.char_points", 0.49);
         commandTracking               = config.getBoolean("command.tracking", true);
+        commandTrackCancelled         = config.getBoolean("command.track_cancelled", true);
         commandPoints                 = config.getDouble("command.points", 1.0);
         commandCharPoints             = config.getDouble("command.char_points", 0.53);
         moveTracking                  = config.getBoolean("move.tracking", true);

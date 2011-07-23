@@ -47,6 +47,8 @@ move:
 chat:
     # Enable tracking of chat?
     tracking: true
+    # Track cancelled chat events?
+    track_cancelled: true
     # Points per character on chat
     char_points: 0.49
     # Points per chat use (adds on the char value)
@@ -54,6 +56,8 @@ chat:
 command:
     # Enable tracking of commands?
     tracking: true
+    # Track cancelled commands?
+    track_cancelled: true
     # Points per character on commands
     char_points: 0.53
     # Points per command use (adds on the char value)
