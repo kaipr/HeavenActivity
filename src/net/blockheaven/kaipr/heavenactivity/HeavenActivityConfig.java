@@ -20,6 +20,7 @@ public class HeavenActivityConfig {
      * Configuration values
      */
     public int maxSequences;
+    public int defaultSequences;
     public int sequenceInterval;
     public int notificationSequence;
     public int incomeSequence;
@@ -61,6 +62,7 @@ public class HeavenActivityConfig {
         config.load();
         
         maxSequences                  = config.getInt("general.max_sequences", 15);
+        defaultSequences              = config.getInt("general.default_sequences", maxSequences);
         sequenceInterval              = config.getInt("general.sequence_interval", 60);
         notificationSequence          = config.getInt("general.notification_sequence", 6);
         incomeSequence                = config.getInt("general.income_sequence", 15);

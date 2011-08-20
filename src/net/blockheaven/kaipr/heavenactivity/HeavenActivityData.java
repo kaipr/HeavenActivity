@@ -58,7 +58,7 @@ public class HeavenActivityData {
     }
     
     /**
-     * Calculates and returns activity of a given Player
+     * Calculates and returns activity of given Player
      * 
      * @param player
      * @return
@@ -67,8 +67,14 @@ public class HeavenActivityData {
         return getActivity(player.getName());
     }
     
+    /**
+     * Calculates and returns activity of given playerName
+     * 
+     * @param playerName
+     * @return
+     */
     public int getActivity(String playerName) {
-        return getActivity(playerName, playersActivities.size());
+        return getActivity(playerName, plugin.config.defaultSequences);
     }
     
     /**
@@ -85,13 +91,13 @@ public class HeavenActivityData {
         int startSequence = playersActivities.size() - sequences;
         if (startSequence < 0) startSequence = 0;
         
-        Iterator<Map<String, Map<ActivitySource, Integer>>> sequenceIterator = playersActivities.listIterator(startSequence);
+        final Iterator<Map<String, Map<ActivitySource, Integer>>> sequenceIterator = playersActivities.listIterator(startSequence);
         
         Double activityPoints = 0.0;
         
         while (sequenceIterator.hasNext()) {
             final Map<ActivitySource, Integer> playerSequence = sequenceIterator.next().get(playerName);
-            Iterator<ActivitySource> sourceIterator = playerSequence.keySet().iterator();
+            final Iterator<ActivitySource> sourceIterator = playerSequence.keySet().iterator();
             
             while (sourceIterator.hasNext()) {
                 final ActivitySource source = sourceIterator.next();
