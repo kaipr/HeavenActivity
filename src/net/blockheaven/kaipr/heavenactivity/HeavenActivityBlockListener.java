@@ -31,15 +31,10 @@ public class HeavenActivityBlockListener extends BlockListener {
         final long time = System.currentTimeMillis();
         final String playerName = event.getPlayer().getName();
         
-        if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {
-            final Double points = plugin.getMultiplier(event.getPlayer(), "block_place") * plugin.config.blockPlacePoints;
-            
-            plugin.addActivity(playerName, points);
+        if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {            
+            plugin.data.addActivity(playerName, ActivitySource.BLOCK_PLACE, plugin.config.blockPlacePoints);
             
             lastAction.put(playerName, time);
-            
-            // Tracking
-            plugin.blockPlacePointsGiven += points;
         }
         
     }
@@ -54,14 +49,9 @@ public class HeavenActivityBlockListener extends BlockListener {
         final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {
-            Double points = plugin.getMultiplier(event.getPlayer(), "block_break") * plugin.config.blockBreakPoints;
-            
-            plugin.addActivity(playerName, points);
+            plugin.data.addActivity(playerName, ActivitySource.BLOCK_BREAK, plugin.config.blockBreakPoints);
             
             lastAction.put(playerName, time);
-            
-            // Tracking
-            plugin.blockBreakPointsGiven += points;
         }
         
     }

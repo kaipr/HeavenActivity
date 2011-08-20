@@ -52,7 +52,6 @@ public class HeavenActivityConfig {
     public HeavenActivityConfig(HeavenActivity plugin) {
         this.plugin = plugin;
         
-        plugin.getDataFolder().mkdirs();
         config = plugin.getConfiguration();
         
         load();
@@ -92,14 +91,6 @@ public class HeavenActivityConfig {
         blockBreakPoints              = config.getDouble("block.break_points", 1.95);
         
         logCommands                   = config.getBoolean("general.log_commands", false);
-        
-        plugin.chatPointsGiven        = config.getDouble("stats.chat_points", 0.0);
-        plugin.chatCharPointsGiven    = config.getDouble("stats.chat_char_points", 0.0);
-        plugin.commandPointsGiven     = config.getDouble("stats.command_points", 0.0);
-        plugin.commandCharPointsGiven = config.getDouble("stats.command_char_points", 0.0);
-        plugin.movePointsGiven        = config.getDouble("stats.move_points", 0.0);
-        plugin.blockPlacePointsGiven  = config.getDouble("stats.block_place_points", 0.0);
-        plugin.blockBreakPointsGiven  = config.getDouble("stats.block_break_points", 0.0);
     }
     
     public void reloadAndSave() {
@@ -130,14 +121,6 @@ public class HeavenActivityConfig {
             config.setProperty("income.activity_modifier", incomeActivityModifier);
         if (!configNodes.contains("balance_multiplier"))
             config.setProperty("income.balance_multiplier", incomeBalanceMultiplier);
-        
-        config.setProperty("stats.chat_points", plugin.chatPointsGiven);
-        config.setProperty("stats.chat_char_points", plugin.chatCharPointsGiven);
-        config.setProperty("stats.command_points", plugin.commandPointsGiven);
-        config.setProperty("stats.command_char_points", plugin.commandCharPointsGiven);
-        config.setProperty("stats.move_points", plugin.movePointsGiven);
-        config.setProperty("stats.block_place_points", plugin.blockPlacePointsGiven);
-        config.setProperty("stats.block_break_points", plugin.blockBreakPointsGiven);
         
         config.save();
     }

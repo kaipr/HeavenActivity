@@ -1,8 +1,5 @@
 package net.blockheaven.kaipr.heavenactivity;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -37,6 +34,11 @@ public class HeavenActivity extends JavaPlugin {
     public HeavenActivityConfig config;
     
     /**
+     * Data
+     */
+    public HeavenActivityData data;
+    
+    /**
      * Permission handler
      */
     public static PermissionHandler Permissions;
@@ -52,11 +54,6 @@ public class HeavenActivity extends JavaPlugin {
     public static iConomy iConomy;
     
     /**
-     * Stores the sequences of players activities <sequence, <playerName, activity>>
-     */
-    public Map<Integer, Map<String, Double>> playersActivities = new HashMap<Integer, Map<String, Double>>();
-    
-    /**
      * Sequence update timer
      */
     public static Timer updateTimer = null;
@@ -67,17 +64,6 @@ public class HeavenActivity extends JavaPlugin {
     public int currentSequence = 0;
     
     /**
-     * Tracking
-     */
-    public Double chatPointsGiven;
-    public Double chatCharPointsGiven;
-    public Double commandPointsGiven;
-    public Double commandCharPointsGiven;
-    public Double movePointsGiven;
-    public Double blockPlacePointsGiven;
-    public Double blockBreakPointsGiven;
-    
-    /**
      * Called when plugin gets enabled, initialize all the stuff we need
      */
     public void onEnable() {
@@ -85,7 +71,10 @@ public class HeavenActivity extends JavaPlugin {
         logger.info(getDescription().getName() + " "
                 + getDescription().getVersion() + " enabled.");
         
+        getDataFolder().mkdirs();
+        
         config = new HeavenActivityConfig(this);
+        data = new HeavenActivityData(this);
         
         startUpdateTimer();
         
@@ -128,13 +117,13 @@ public class HeavenActivity extends JavaPlugin {
                 sender.sendMessage(ChatColor.RED + "[Activity] Activity is only tracked for players!");
                 return false;
             }
-            final int activity = getActivity((Player) sender);
+            final int activity = data.getActivity((Player) sender);
             sendMessage(sender, "Your current activity is: " + activityColor(activity) + activity + "%");
         } else if (args[0].compareToIgnoreCase("list") == 0 || args[0].compareToIgnoreCase("listall") == 0) {
             if (hasPermission(sender, "activity.view.list", true)) {
                 StringBuilder res = new StringBuilder();
                 for (Player player : getServer().getOnlinePlayers()) {
-                    int activity = getActivity(player);
+                    final int activity = data.getActivity(player);
                     res.append(activityColor(activity) + player.getName() + " " + activity + "%");
                     res.append(ChatColor.GRAY + ", ");
                 }
@@ -144,43 +133,18 @@ public class HeavenActivity extends JavaPlugin {
             }
         } else if (args[0].compareToIgnoreCase("admin") == 0 && hasPermission(sender, "activity.admin", false)) {
             if (args.length == 1) {
-                sendMessage(sender, ChatColor.RED + "/activity admin <reload|stats|resetstats>");
+                sendMessage(sender, ChatColor.RED + "/activity admin <reload>");
             } else if (args[1].compareToIgnoreCase("reload") == 0) {
                 config.reloadAndSave();
                 config.load();
                 stopUpdateTimer();
                 startUpdateTimer();
                 sendMessage(sender, ChatColor.GREEN + "Reloaded");
-            } else if (args[1].compareToIgnoreCase("stats") == 0) {
-                sendMessage(sender, ChatColor.YELLOW + "Statistic " + ChatColor.DARK_GRAY + "--------------------");
-                sendMessage(sender, "Chat: " + ChatColor.WHITE 
-                        + this.chatPointsGiven.intValue());
-                sendMessage(sender, "Chat char: " + ChatColor.WHITE 
-                        + this.chatCharPointsGiven.intValue());
-                sendMessage(sender, "Command: " + ChatColor.WHITE
-                        + this.commandPointsGiven.intValue());
-                sendMessage(sender, "Command char: " + ChatColor.WHITE
-                        + this.commandCharPointsGiven.intValue());
-                sendMessage(sender, "Move: " + ChatColor.WHITE
-                        + this.movePointsGiven.intValue());
-                sendMessage(sender, "Block place: " + ChatColor.WHITE
-                        + this.blockPlacePointsGiven.intValue());
-                sendMessage(sender, "Block break: " + ChatColor.WHITE
-                        + this.blockBreakPointsGiven.intValue());
-            } else if (args[1].compareToIgnoreCase("resetstats") == 0) {
-                this.chatPointsGiven = 0.0;
-                this.chatCharPointsGiven = 0.0;
-                this.commandPointsGiven = 0.0;
-                this.commandCharPointsGiven = 0.0;
-                this.movePointsGiven = 0.0;
-                this.blockPlacePointsGiven = 0.0;
-                this.blockBreakPointsGiven = 0.0;
-                sendMessage(sender, ChatColor.RED + "Stats reseted");
             }
         } else if (args.length == 1) {
             if (hasPermission(sender, "activity.view.other", true)) {
                String playerName = matchSinglePlayer(sender, args[0]).getName();
-               int activity = getActivity(playerName);
+               int activity = data.getActivity(playerName);
                sendMessage(sender, "Current activity of " + playerName + ": " + activityColor(activity) + activity + "%");
             } else {
                 sendMessage(sender, ChatColor.RED + "You have no permission to see other's activity.");
@@ -231,74 +195,21 @@ public class HeavenActivity extends JavaPlugin {
      * @param which
      * @return
      */
-    public Double getMultiplier(Player player, String which) {
+    public Double getMultiplier(String playerName, ActivitySource source) {
         if (Permissions == null)
             return null;
         
+        Player player = getServer().getPlayer(playerName);
+        
         if (permissionsVersion < 3) {
             final double multiplier = Permissions.getPermissionDouble(
-                    player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
+                    player.getWorld().getName(), player.getName(), "activity.multiplier." + source);
             return multiplier == -1.0 ? 1.0 : multiplier;
         } else {
             final Double multiplier = Permissions.getInfoDouble(
-                    player.getWorld().getName(), player.getName(), "activity.multiplier." + which, false);
+                    player.getWorld().getName(), player.getName(), "activity.multiplier." + source, false);
             return multiplier == null ? 1.0 : multiplier;
         }
-    }
-    
-    /**
-     * Adds given amount of activity to the given playerName
-     * 
-     * @param playerName
-     * @param activity
-     */
-    public void addActivity(String playerName, Double activity) {
-        
-        activity = config.pointMultiplier * activity;
-        playerName = playerName.toLowerCase();
-        if (playersActivities.get(this.currentSequence).containsKey(playerName)) {
-            activity += playersActivities.get(this.currentSequence).get(playerName);
-        }
-        
-        playersActivities.get(this.currentSequence).put(playerName, activity);
-        
-    }
-    
-    /**
-     * Calculates and returns activity of a given Player
-     * 
-     * @param player
-     * @return
-     */
-    public int getActivity(Player player) {
-        return getActivity(player.getName());
-    }
-    
-    /**
-     * Calculates and returns activity of given playerName
-     * 
-     * @param playerName
-     * @return
-     */
-    public int getActivity(String playerName) {
-        
-        playerName = playerName.toLowerCase();
-        
-        Iterator<Map<String, Double>> iterator = playersActivities.values().iterator();
-        
-        Double rawActivity = 0.0;
-        while (iterator.hasNext()) {
-            Map<String, Double> playersActivity = iterator.next();
-            if (playersActivity.containsKey(playerName)) {
-                rawActivity += playersActivity.get(playerName);
-            }
-        }
-        
-        int activity = (int)(rawActivity / playersActivities.size());
-        if (activity > 100) activity = 100;
-        
-        return activity;
-    
     }
     
     /**
@@ -355,7 +266,7 @@ public class HeavenActivity extends JavaPlugin {
                 // Give players info
                 if (currentSequence % config.notificationSequence == 0) {
                     for (Player player : getServer().getOnlinePlayers()) {
-                        int activity = getActivity(player.getName());
+                        int activity = data.getActivity(player.getName());
                         sendMessage(player, "Your current activity is: " 
                                 + activityColor(activity) + activity + "%");
                     }
@@ -366,15 +277,8 @@ public class HeavenActivity extends JavaPlugin {
                     handleOnlineIncome();
                 }
                 
-                int nextSequence;
-                if (currentSequence == config.maxSequences) {
-                    nextSequence = 1;
-                } else {
-                    nextSequence = currentSequence + 1;
-                }
-                
-                playersActivities.put(nextSequence, new HashMap<String, Double>());
-                currentSequence = nextSequence;
+                ++currentSequence;
+                data.initNewSequence();
             }
             
         }, 0, (config.sequenceInterval * 1000L));
@@ -397,7 +301,7 @@ public class HeavenActivity extends JavaPlugin {
     @SuppressWarnings("static-access")
     protected void handleOnlineIncome() {
         
-        if (playersActivities.size() == 0)
+        if (data.playersActivities.size() == 0)
             return;
         
         if (iConomy == null) {
@@ -406,7 +310,7 @@ public class HeavenActivity extends JavaPlugin {
         }
         
         for (Player player : getServer().getOnlinePlayers()) {
-            final int activity = getActivity(player);
+            final int activity = data.getActivity(player);
             if ((int)activity >= config.incomeMinActivity) {
                 Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
                 

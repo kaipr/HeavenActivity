@@ -39,14 +39,9 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.moveDelay)) {
-            final Double points = plugin.getMultiplier(event.getPlayer(), "move") * plugin.config.movePoints;
-            
-            plugin.addActivity(playerName, points);
+            plugin.data.addActivity(playerName, ActivitySource.MOVE, plugin.config.movePoints);
             
             lastAction.put(playerName, time);
-            
-            // Tracking
-            plugin.movePointsGiven += points;
         }
         
     }
@@ -57,16 +52,8 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         if (event.isCancelled() && !plugin.config.chatTrackCancelled)
             return;
         
-        final String playerName = event.getPlayer().getName();
-        
-        final Double points = plugin.getMultiplier(event.getPlayer(), "chat_char") 
-            * event.getMessage().length() * plugin.config.chatCharPoints;
-        
-        plugin.addActivity(playerName, points + plugin.config.chatPoints);
-        
-        // Tracking
-        plugin.chatCharPointsGiven += points;
-        plugin.chatPointsGiven += plugin.config.chatPoints;
+        plugin.data.addActivity(event.getPlayer().getName(), ActivitySource.CHAT, 
+                (event.getMessage().length() * plugin.config.chatCharPoints) + plugin.config.chatPoints);
         
     }
     
@@ -84,14 +71,8 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         final String playerName = event.getPlayer().getName();
         
         if (plugin.config.commandTracking) {
-            final Double points = plugin.getMultiplier(event.getPlayer(), "command_char") 
-                * event.getMessage().length() * plugin.config.commandCharPoints;
-
-            plugin.addActivity(playerName, points + plugin.config.commandPoints);
-        
-            // Tracking
-            plugin.commandCharPointsGiven += points;
-            plugin.commandPointsGiven += plugin.config.commandPoints;
+            plugin.data.addActivity(playerName, ActivitySource.COMMAND,
+                    (event.getMessage().length() * plugin.config.commandCharPoints) + plugin.config.commandPoints);
         }
         
         if (plugin.config.logCommands) {
