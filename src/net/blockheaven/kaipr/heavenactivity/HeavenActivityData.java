@@ -25,8 +25,9 @@ public class HeavenActivityData {
     public void initNewSequence() {
         synchronized(playersActivities) {
             if (playersActivities.size() == plugin.config.maxSequences) {
-                Map<String, Map<ActivitySource, Integer>> oldSequence = playersActivities.remove(0);
                 // TODO: Collect stats
+                // Map<String, Map<ActivitySource, Integer>> oldSequence = playersActivities.remove(0);
+                playersActivities.remove(0);
             }
             playersActivities.add(new HashMap<String, Map<ActivitySource, Integer>>());
         }
