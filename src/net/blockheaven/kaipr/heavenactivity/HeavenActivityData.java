@@ -19,17 +19,21 @@ public class HeavenActivityData {
         this.plugin = plugin;
     }
     
-    public List<Map<String, Map<ActivitySource, Double>>> playersActivities = 
-        new ArrayList<Map<String, Map<ActivitySource, Double>>>();
+    public List<Map<String, Map<ActivitySource, Integer>>> playersActivities = 
+        new ArrayList<Map<String, Map<ActivitySource, Integer>>>();
     
     public void initNewSequence() {
         synchronized(playersActivities) {
             if (playersActivities.size() == plugin.config.maxSequences) {
-                Map<String, Map<ActivitySource, Double>> oldSequence = playersActivities.remove(0);
+                Map<String, Map<ActivitySource, Integer>> oldSequence = playersActivities.remove(0);
                 // TODO: Collect stats
             }
-            playersActivities.add(new HashMap<String, Map<ActivitySource, Double>>());
+            playersActivities.add(new HashMap<String, Map<ActivitySource, Integer>>());
         }
+    }
+    
+    public void addActivity(String playerName, ActivitySource source) {
+        addActivity(playerName, source, 1);
     }
     
     /**
@@ -39,18 +43,17 @@ public class HeavenActivityData {
      * @param source
      * @param activity
      */
-    public void addActivity(String playerName, ActivitySource source, Double activity) {
+    public void addActivity(String playerName, ActivitySource source, Integer count) {
         
-        activity = plugin.config.pointMultiplier * plugin.getMultiplier(playerName, source) * activity;
         playerName = playerName.toLowerCase();
 
         if (getCurrentSequence().containsKey(playerName)) {
-            activity += getCurrentSequence().get(playerName).get(source);
+            count += getCurrentSequence().get(playerName).get(source);
         } else {
-            getCurrentSequence().put(playerName, new HashMap<ActivitySource, Double>());
+            getCurrentSequence().put(playerName, new HashMap<ActivitySource, Integer>());
         }
         
-        getCurrentSequence().get(playerName).put(source, activity);
+        getCurrentSequence().get(playerName).put(source, count);
         
     }
     
@@ -81,23 +84,28 @@ public class HeavenActivityData {
         
         int startSequence = playersActivities.size() - sequences;
         if (startSequence < 0) startSequence = 0;
-        Iterator<Map<String, Map<ActivitySource, Double>>> sequenceIterator = playersActivities.listIterator(startSequence);
+        
+        Iterator<Map<String, Map<ActivitySource, Integer>>> sequenceIterator = playersActivities.listIterator(startSequence);
         
         Double activityPoints = 0.0;
+        
         while (sequenceIterator.hasNext()) {
-            Iterator<Double> sourceIterator = sequenceIterator.next().get(playerName).values().iterator();
+            final Map<ActivitySource, Integer> playerSequence = sequenceIterator.next().get(playerName);
+            Iterator<ActivitySource> sourceIterator = playerSequence.keySet().iterator();
+            
             while (sourceIterator.hasNext()) {
-                activityPoints += sourceIterator.next();
+                final ActivitySource source = sourceIterator.next();
+                activityPoints += playerSequence.get(source) * plugin.config.pointsFor(source) * plugin.getMultiplier(playerName, source);
             }
         }
         
-        final int activity = (int)(activityPoints / sequences);
+        final int activity = (int)(activityPoints * plugin.config.pointMultiplier / sequences);
         
         return (activity > 100) ? 100 : activity;
     
     }
     
-    private Map<String, Map<ActivitySource, Double>> getCurrentSequence() {
+    private Map<String, Map<ActivitySource, Integer>> getCurrentSequence() {
         return playersActivities.get(playersActivities.size() - 1);
     }
 

@@ -39,7 +39,7 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.moveDelay)) {
-            plugin.data.addActivity(playerName, ActivitySource.MOVE, plugin.config.movePoints);
+            plugin.data.addActivity(playerName, ActivitySource.MOVE);
             
             lastAction.put(playerName, time);
         }
@@ -52,8 +52,9 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         if (event.isCancelled() && !plugin.config.chatTrackCancelled)
             return;
         
-        plugin.data.addActivity(event.getPlayer().getName(), ActivitySource.CHAT, 
-                (event.getMessage().length() * plugin.config.chatCharPoints) + plugin.config.chatPoints);
+        final String playerName = event.getPlayer().getName();
+        plugin.data.addActivity(playerName, ActivitySource.CHAT);
+        plugin.data.addActivity(playerName, ActivitySource.CHAT_CHAR, event.getMessage().length());
         
     }
     
@@ -71,8 +72,8 @@ public class HeavenActivityPlayerListener extends PlayerListener {
         final String playerName = event.getPlayer().getName();
         
         if (plugin.config.commandTracking) {
-            plugin.data.addActivity(playerName, ActivitySource.COMMAND,
-                    (event.getMessage().length() * plugin.config.commandCharPoints) + plugin.config.commandPoints);
+            plugin.data.addActivity(playerName, ActivitySource.COMMAND);
+            plugin.data.addActivity(playerName, ActivitySource.COMMAND_CHAR, event.getMessage().length());
         }
         
         if (plugin.config.logCommands) {

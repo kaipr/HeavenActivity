@@ -32,7 +32,7 @@ public class HeavenActivityBlockListener extends BlockListener {
         final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {            
-            plugin.data.addActivity(playerName, ActivitySource.BLOCK_PLACE, plugin.config.blockPlacePoints);
+            plugin.data.addActivity(playerName, ActivitySource.BLOCK_PLACE);
             
             lastAction.put(playerName, time);
         }
@@ -49,7 +49,7 @@ public class HeavenActivityBlockListener extends BlockListener {
         final String playerName = event.getPlayer().getName();
         
         if (!lastAction.containsKey(playerName) || (time > lastAction.get(playerName) + plugin.config.blockDelay)) {
-            plugin.data.addActivity(playerName, ActivitySource.BLOCK_BREAK, plugin.config.blockBreakPoints);
+            plugin.data.addActivity(playerName, ActivitySource.BLOCK_BREAK);
             
             lastAction.put(playerName, time);
         }

@@ -124,4 +124,26 @@ public class HeavenActivityConfig {
         
         config.save();
     }
+    
+    public Double pointsFor(ActivitySource source) {
+        switch(source) {
+        case MOVE:
+            return movePoints;
+        case BLOCK_BREAK:
+            return blockBreakPoints;
+        case BLOCK_PLACE:
+            return blockPlacePoints;
+        case CHAT:
+            return chatPoints;
+        case CHAT_CHAR:
+            return chatCharPoints;
+        case COMMAND:
+            return commandPoints;
+        case COMMAND_CHAR:
+            return commandCharPoints;
+        }
+        
+        return null;
+    }
+    
 }
