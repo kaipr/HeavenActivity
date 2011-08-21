@@ -195,7 +195,7 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public Map<ActivitySource, Double> getCumulatedMultiplierSet(Player player) {
-        Map<ActivitySource, Double> res = new HashMap<ActivitySource, Double>();
+        Map<ActivitySource, Double> res = new HashMap<ActivitySource, Double>(ActivitySource.values().length);
         
         Iterator<String> multiplierSetNameIterator = config.multiplierSets.keySet().iterator();
         while (multiplierSetNameIterator.hasNext()) {

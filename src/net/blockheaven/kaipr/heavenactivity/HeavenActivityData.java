@@ -15,12 +15,12 @@ public class HeavenActivityData {
      */
     protected HeavenActivity plugin;
     
+    public List<Map<String, Map<ActivitySource, Integer>>> playersActivities;
+    
     public HeavenActivityData(HeavenActivity plugin) {
         this.plugin = plugin;
+        playersActivities = new ArrayList<Map<String, Map<ActivitySource, Integer>>>(plugin.config.maxSequences);
     }
-    
-    public List<Map<String, Map<ActivitySource, Integer>>> playersActivities = 
-        new ArrayList<Map<String, Map<ActivitySource, Integer>>>();
     
     public void initNewSequence() {
         synchronized(playersActivities) {
@@ -51,7 +51,7 @@ public class HeavenActivityData {
         if (getCurrentSequence().containsKey(playerName)) {
             count += getCurrentSequence().get(playerName).get(source);
         } else {
-            getCurrentSequence().put(playerName, new HashMap<ActivitySource, Integer>());
+            getCurrentSequence().put(playerName, new HashMap<ActivitySource, Integer>(ActivitySource.values().length));
         }
         
         getCurrentSequence().get(playerName).put(source, count);
