@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.util.config.Configuration;
+import org.mbertoli.jfep.Parser;
 
 public class HeavenActivityConfig {
 
@@ -46,10 +47,7 @@ public class HeavenActivityConfig {
     public boolean incomeEnabled;
     public int incomeMinActivity;
     public boolean incomeAllowNegative;
-    public Double incomeBaseValue;
-    public int incomeTargetActivity;
-    public int incomeActivityModifier;
-    public Double incomeBalanceMultiplier;
+    public Parser incomeExpression;
     public Map<String, Map<ActivitySource, Double>> multiplierSets = new HashMap<String, Map<ActivitySource, Double>>();
     public boolean logCommands;
     
@@ -75,10 +73,7 @@ public class HeavenActivityConfig {
         incomeEnabled                 = config.getBoolean("income.enabled", true);
         incomeMinActivity             = config.getInt("income.min_activity", 1);
         incomeAllowNegative           = config.getBoolean("income.allow_negative", true);
-        incomeBaseValue               = config.getDouble("income.base_value", 8);
-        incomeTargetActivity          = config.getInt("income.target_activity", 50);
-        incomeActivityModifier        = config.getInt("income.activity_modifier", 75);
-        incomeBalanceMultiplier       = config.getDouble("income.balance_multiplier", 0.0);
+        incomeExpression              = new Parser(config.getString("income.expression", "8 + (((activity - 50) / 75) * 8)"));
         
         chatTracking                  = config.getBoolean("chat.tracking", true);
         chatTrackCancelled            = config.getBoolean("chat.track_cancelled", true);
@@ -134,14 +129,6 @@ public class HeavenActivityConfig {
         configNodes = config.getKeys("income");
         if (!configNodes.contains("enabled"))
             config.setProperty("income.enabled", incomeEnabled);
-        if (!configNodes.contains("base_value"))
-            config.setProperty("income.base_value", incomeBaseValue);
-        if (!configNodes.contains("target_activity"))
-            config.setProperty("income.target_activity", incomeTargetActivity);
-        if (!configNodes.contains("activity_modifier"))
-            config.setProperty("income.activity_modifier", incomeActivityModifier);
-        if (!configNodes.contains("balance_multiplier"))
-            config.setProperty("income.balance_multiplier", incomeBalanceMultiplier);
         
         config.save();
     }

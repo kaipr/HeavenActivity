@@ -340,9 +340,10 @@ public class HeavenActivity extends JavaPlugin {
             if ((int)activity >= config.incomeMinActivity) {
                 MethodAccount account = ecoMethod.getAccount(player.getName());
                 
-                Double amount = config.incomeBaseValue 
-                  + (((double)(activity - config.incomeTargetActivity) / (double)config.incomeActivityModifier) * config.incomeBaseValue)
-                  + (account.balance() * config.incomeBalanceMultiplier);
+                config.incomeExpression.setVariable("activity", activity);
+                config.incomeExpression.setVariable("player_balance", account.balance());
+                
+                final Double amount = config.incomeExpression.getValue();
                 
                 if (amount > 0.0 || config.incomeAllowNegative) {
                     account.add(amount);
