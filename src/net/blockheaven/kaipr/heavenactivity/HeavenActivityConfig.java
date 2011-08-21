@@ -2,6 +2,7 @@ package net.blockheaven.kaipr.heavenactivity;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.util.config.Configuration;
@@ -22,6 +23,7 @@ public class HeavenActivityConfig {
     /**
      * Configuration values
      */
+    public boolean debug;
     public int maxSequences;
     public int defaultSequences;
     public int sequenceInterval;
@@ -75,10 +77,14 @@ public class HeavenActivityConfig {
             exp.append(" + (((player_activity - ").append(targetActivity).append(") / ").append(activityModifier).append(") * ").append(baseValue).append(")");
             exp.append(" + (player_balance * ").append(balanceMultiplier).append(")");
             config.setProperty("income.expression", exp.toString());
+            config.removeProperty("income.base_value");
+            config.removeProperty("income.target_activity");
+            config.removeProperty("income.activity_modifier");
             config.save();
             config.load();
         }
         
+        debug                         = config.getBoolean("general.debug", false);
         maxSequences                  = config.getInt("general.max_sequences", 15);
         defaultSequences              = config.getInt("general.default_sequences", maxSequences);
         sequenceInterval              = config.getInt("general.sequence_interval", 60);
@@ -109,19 +115,22 @@ public class HeavenActivityConfig {
         blockPlacePoints              = config.getDouble("block.place_points", 4.0);
         blockBreakPoints              = config.getDouble("block.break_points", 2.0);
         
-        Iterator<String> multiplierSetNameIterator = config.getKeys("multiplier").iterator();
-        while (multiplierSetNameIterator.hasNext()) {
-            String multiplierSetName = multiplierSetNameIterator.next();
-            
-            Map<ActivitySource, Double> multiplierSet = new HashMap<ActivitySource, Double>();
-            
-            final Iterator<String> sourceIterator = config.getKeys("multiplier." + multiplierSetName).iterator();
-            while (sourceIterator.hasNext()) {
-                final String source = sourceIterator.next();
-                multiplierSet.put(ActivitySource.parseActivitySource(source), config.getDouble("multiplier." + multiplierSetName + "." + source, 1.0));
+        List<String> multiplierNames  = config.getKeys("multiplier");
+        if (multiplierNames != null && multiplierNames.size() > 0) {
+            Iterator<String> multiplierSetNameIterator = multiplierNames.iterator();
+            while (multiplierSetNameIterator.hasNext()) {
+                String multiplierSetName = multiplierSetNameIterator.next();
+                
+                Map<ActivitySource, Double> multiplierSet = new HashMap<ActivitySource, Double>();
+                
+                final Iterator<String> sourceIterator = config.getKeys("multiplier." + multiplierSetName).iterator();
+                while (sourceIterator.hasNext()) {
+                    final String source = sourceIterator.next();
+                    multiplierSet.put(ActivitySource.parseActivitySource(source), config.getDouble("multiplier." + multiplierSetName + "." + source, 1.0));
+                }
+                
+                multiplierSets.put(multiplierSetName, multiplierSet);
             }
-            
-            multiplierSets.put(multiplierSetName, multiplierSet);
         }
     }
     

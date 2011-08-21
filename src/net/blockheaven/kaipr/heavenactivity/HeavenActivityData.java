@@ -24,12 +24,14 @@ public class HeavenActivityData {
     
     public void initNewSequence() {
         synchronized(playersActivities) {
+            long sequenceInitStarted = System.currentTimeMillis();
             if (playersActivities.size() == plugin.config.maxSequences) {
                 // TODO: Collect stats
                 // Map<String, Map<ActivitySource, Integer>> oldSequence = playersActivities.remove(0);
                 playersActivities.remove(0);
             }
             playersActivities.add(new HashMap<String, Map<ActivitySource, Integer>>());
+            plugin.debugMsg("New sequence initiated", sequenceInitStarted);
         }
     }
     
@@ -49,7 +51,10 @@ public class HeavenActivityData {
         playerName = playerName.toLowerCase();
 
         if (getCurrentSequence().containsKey(playerName)) {
-            count += getCurrentSequence().get(playerName).get(source);
+            final Integer oldCount = getCurrentSequence().get(playerName).get(source);
+            if (oldCount != null) {
+                count += oldCount;
+            }
         } else {
             getCurrentSequence().put(playerName, new HashMap<ActivitySource, Integer>(ActivitySource.values().length));
         }
@@ -87,6 +92,8 @@ public class HeavenActivityData {
      */
     public int getActivity(String playerName, int sequences) {
         
+        long started = System.currentTimeMillis();
+        
         playerName = playerName.toLowerCase();
         
         int startSequence = playersActivities.size() - sequences;
@@ -99,6 +106,8 @@ public class HeavenActivityData {
         
         for (int i1 = playersActivities.size(); i1 > 0; i1--) {
             final Map<ActivitySource, Integer> playerSequence = sequenceIterator.next().get(playerName);
+            if (playerSequence == null) continue;
+            
             final Iterator<ActivitySource> sourceIterator = playerSequence.keySet().iterator();
             
             for (int i2 = playerSequence.size(); i2 > 0; i2--) {
@@ -112,6 +121,9 @@ public class HeavenActivityData {
         }
         
         final int activity = (int)(activityPoints * plugin.config.pointMultiplier / sequences);
+        
+        if (plugin.config.debug)
+            plugin.debugMsg("Activity (" + String.valueOf(activity) + ") calculated for player " + playerName + " using " + String.valueOf(sequences) + " sequences.", started);
         
         return (activity > 100) ? 100 : activity;
     

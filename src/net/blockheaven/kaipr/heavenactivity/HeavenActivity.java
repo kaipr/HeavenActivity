@@ -60,7 +60,7 @@ public class HeavenActivity extends JavaPlugin {
     /**
      * The current sequence
      */
-    public int currentSequence = 0;
+    public int currentSequence = 1;
     
     /**
      * Called when plugin gets enabled, initialize all the stuff we need
@@ -75,6 +75,7 @@ public class HeavenActivity extends JavaPlugin {
         config = new HeavenActivityConfig(this);
         data = new HeavenActivityData(this);
         
+        data.initNewSequence();
         startUpdateTimer();
         
         PlayerListener playerListener = new HeavenActivityPlayerListener(this);
@@ -129,11 +130,15 @@ public class HeavenActivity extends JavaPlugin {
                     res.append(activityColor(activity) + player.getName() + " " + activity + "%");
                     res.append(ChatColor.GRAY + ", ");
                 }
-                sendMessage(sender, res.substring(0, res.length() - 2));
+                if (res.length() > 0) {
+                    sendMessage(sender, res.substring(0, res.length() - 2));
+                } else {
+                    sendMessage(sender, "There are no players online.");
+                }
             } else {
                 sendMessage(sender, ChatColor.RED + "You have no permission to see a list of online players' activity.");
             }
-        } else if (args[0].compareToIgnoreCase("admin") == 0 && hasPermission(sender, "activity.admin")) {
+        } else if (args[0].compareToIgnoreCase("admin") == 0 && hasPermission(sender, "activity.admin.*")) {
             if (args.length == 1) {
                 sendMessage(sender, ChatColor.RED + "/activity admin <reload>");
             } else if (args[1].compareToIgnoreCase("reload") == 0) {
@@ -141,6 +146,29 @@ public class HeavenActivity extends JavaPlugin {
                 stopUpdateTimer();
                 startUpdateTimer();
                 sendMessage(sender, ChatColor.GREEN + "Reloaded");
+            } else if (args[1].compareToIgnoreCase("benchmark") == 0) {
+                TimerTask getting = new TimerTask() {
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        for (int i=100000; i > 0; i--) {
+                            data.getActivity("_benchmark_");
+                        }
+                        HeavenActivity.logger.info("100.000 x getActivity: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
+                    }
+                };
+                
+                TimerTask setting = new TimerTask() {
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        for (int i=100000; i > 0; i--) {
+                            data.addActivity("_benchmark_", ActivitySource.MOVE, 3);
+                        }
+                        HeavenActivity.logger.info("1.000.000 x addActivity: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
+                    }
+                };
+                
+                getServer().getScheduler().scheduleAsyncDelayedTask(this, getting);
+                getServer().getScheduler().scheduleAsyncDelayedTask(this, setting);
             }
         } else if (args.length == 1) {
             if (hasPermission(sender, "activity.view.other")) {
@@ -278,6 +306,44 @@ public class HeavenActivity extends JavaPlugin {
     }
     
     /**
+     * Returns current activity of given playerName
+     * 
+     * @param playerName
+     * @return
+     */
+    @Deprecated
+    public int getActivity(String playerName) {
+        return data.getActivity(playerName);
+    }
+    
+    /**
+     * Logs a debug message
+     * 
+     * @param message
+     */
+    public void debugMsg(String message) {
+        debugMsg(message, null);
+    }
+    
+    /**
+     * Logs a debug message including the time the action took
+     * 
+     * @param message
+     * @param started
+     */
+    public void debugMsg(String message, Long started) {
+        if (!config.debug) return;
+        StringBuilder msg = new StringBuilder("[HeavenActivity Debug]");
+        msg.append("[Seq#").append(currentSequence).append(" (").append(data.playersActivities.size()).append(")]");
+        if (started != null) {
+            msg.append("[Time:").append(System.currentTimeMillis() - started).append("ms]");
+        }
+        msg.append(" ").append(message);
+        
+        HeavenActivity.logger.info(msg.toString());
+    }
+    
+    /**
      * Initializes and starts the update timer
      */
     protected void startUpdateTimer() {
@@ -289,24 +355,29 @@ public class HeavenActivity extends JavaPlugin {
                 
                 // Give players info
                 if (currentSequence % config.notificationSequence == 0) {
+                    long notificationStarted = System.currentTimeMillis();
                     for (Player player : getServer().getOnlinePlayers()) {
                         if (hasPermission(player, "activity.notify.activity")) {
                             final int activity = data.getActivity(player.getName());
                             sendMessage(player, "Your current activity is: " + activityColor(activity) + activity + "%");
                         }
                     }
+                    debugMsg("Notifications sent", notificationStarted);
                 }
                 
                 // Handle income
                 if (currentSequence % config.incomeSequence == 0 && config.incomeEnabled) {
+                    long handleIncomeStarted = System.currentTimeMillis();
                     handleOnlineIncome();
+                    debugMsg("Online income handled", handleIncomeStarted);
                 }
                 
                 ++currentSequence;
                 data.initNewSequence();
+                
             }
             
-        }, 0, (config.sequenceInterval * 1000L));
+        }, (config.sequenceInterval * 1000L), (config.sequenceInterval * 1000L));
         
         logger.info("[HeavenActivity] Update timer started");
         
