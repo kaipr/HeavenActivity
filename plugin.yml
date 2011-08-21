@@ -5,3 +5,35 @@ commands:
     activity:
         description: Activity commands
         usage: /<command>
+permissions:
+    activity.view.*:
+        description: Allows to view all information
+        children:
+            activity.view.own: true
+            activity.view.other: true
+            activity.view.list: true
+    activity.view.own:
+        description: Allows to view own activity with /activity
+        default: true
+    activity.view.other:
+        description: Allows to view activity of other players with /activity (name)
+        default: true
+    activity.view.list:
+        description: Allows to view a list of all players and their current activity with /activity list
+        default: true
+    
+    activity.notify.*:
+        descriptions: Sends all notifications
+        children:
+            activity.notify.activity: true
+            activity.notify.income: true
+    activity.notify.activity:
+        description: Sends regular notifications about current activity
+        default: true
+    activity.notify.income:
+        description: Sends notifications about income
+        default: true
+    
+    activity.admin.reload:
+        description: Allows reloading
+        default: op

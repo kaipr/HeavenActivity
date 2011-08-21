@@ -1,6 +1,9 @@
 package net.blockheaven.kaipr.heavenactivity;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.util.config.Configuration;
 
@@ -47,6 +50,7 @@ public class HeavenActivityConfig {
     public int incomeTargetActivity;
     public int incomeActivityModifier;
     public Double incomeBalanceMultiplier;
+    public Map<String, Map<ActivitySource, Double>> multiplierSets = new HashMap<String, Map<ActivitySource, Double>>();
     public boolean logCommands;
     
     
@@ -93,6 +97,21 @@ public class HeavenActivityConfig {
         blockBreakPoints              = config.getDouble("block.break_points", 1.95);
         
         logCommands                   = config.getBoolean("general.log_commands", false);
+        
+        Iterator<String> multiplierSetNameIterator = config.getKeys("multiplier").iterator();
+        while (multiplierSetNameIterator.hasNext()) {
+            String multiplierSetName = multiplierSetNameIterator.next();
+            
+            Map<ActivitySource, Double> multiplierSet = new HashMap<ActivitySource, Double>();
+            
+            final Iterator<String> sourceIterator = config.getKeys("multiplier." + multiplierSetName).iterator();
+            while (sourceIterator.hasNext()) {
+                final String source = sourceIterator.next();
+                multiplierSet.put(ActivitySource.parseActivitySource(source), config.getDouble("multiplier." + multiplierSetName + "." + source, 1.0));
+            }
+            
+            multiplierSets.put(multiplierSetName, multiplierSet);
+        }
     }
     
     public void reloadAndSave() {

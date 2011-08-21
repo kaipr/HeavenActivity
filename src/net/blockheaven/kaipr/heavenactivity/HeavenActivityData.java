@@ -95,6 +95,7 @@ public class HeavenActivityData {
         final Iterator<Map<String, Map<ActivitySource, Integer>>> sequenceIterator = playersActivities.listIterator(startSequence);
         
         Double activityPoints = 0.0;
+        final Map<ActivitySource, Double> multiplierSet = plugin.getCumulatedMultiplierSet(plugin.getServer().getPlayer(playerName));
         
         while (sequenceIterator.hasNext()) {
             final Map<ActivitySource, Integer> playerSequence = sequenceIterator.next().get(playerName);
@@ -102,7 +103,11 @@ public class HeavenActivityData {
             
             while (sourceIterator.hasNext()) {
                 final ActivitySource source = sourceIterator.next();
-                activityPoints += playerSequence.get(source) * plugin.config.pointsFor(source) * plugin.getMultiplier(playerName, source);
+                if (multiplierSet.containsKey(source)) {
+                    activityPoints += playerSequence.get(source) * plugin.config.pointsFor(source) * multiplierSet.get(source);
+                } else {
+                    activityPoints += playerSequence.get(source) * plugin.config.pointsFor(source);
+                }
             }
         }
         
