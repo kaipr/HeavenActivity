@@ -198,7 +198,7 @@ public class HeavenActivity extends JavaPlugin {
         Map<ActivitySource, Double> res = new HashMap<ActivitySource, Double>(ActivitySource.values().length);
         
         Iterator<String> multiplierSetNameIterator = config.multiplierSets.keySet().iterator();
-        while (multiplierSetNameIterator.hasNext()) {
+        for (int i1 = config.multiplierSets.size(); i1 > 0; i1--) {
             final String multiplierSetName = multiplierSetNameIterator.next();
             
             if (!hasPermission(player, "activity.multiplier." + multiplierSetName))
@@ -207,7 +207,7 @@ public class HeavenActivity extends JavaPlugin {
             final Map<ActivitySource, Double> multiplierSet = config.multiplierSets.get(multiplierSetName);
             Iterator<ActivitySource> sourceIterator = multiplierSet.keySet().iterator();
             
-            while (sourceIterator.hasNext()) {
+            for (int i2 = multiplierSet.size(); i2 > 0; i2--) {
                 final ActivitySource source = sourceIterator.next();
                 
                 if (res.containsKey(source)) {
