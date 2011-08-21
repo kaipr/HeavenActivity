@@ -345,6 +345,10 @@ public class HeavenActivity extends JavaPlugin {
                 
                 if (amount > 0.0 || config.incomeAllowNegative) {
                     account.add(amount);
+                    
+                    if (config.incomeSourceAccount != null) {
+                        ecoMethod.getAccount(config.incomeSourceAccount).subtract(amount);
+                    }
                 
                     if (hasPermission(player, "activity.notify.income")) {
                         sendMessage(player, "You got " + activityColor(activity) + ecoMethod.format(amount) 

@@ -47,6 +47,7 @@ public class HeavenActivityConfig {
     public int incomeMinActivity;
     public boolean incomeAllowNegative;
     public Parser incomeExpression;
+    public String incomeSourceAccount;
     public Map<String, Map<ActivitySource, Double>> multiplierSets = new HashMap<String, Map<ActivitySource, Double>>();
     public boolean logCommands;
     
@@ -90,6 +91,7 @@ public class HeavenActivityConfig {
         incomeMinActivity             = config.getInt("income.min_activity", 1);
         incomeAllowNegative           = config.getBoolean("income.allow_negative", true);
         incomeExpression              = new Parser(config.getString("income.expression", "8 + (((player_activity - 50) / 75) * 8)"));
+        incomeSourceAccount           = config.getString("income.source_account", null);
         
         chatTracking                  = config.getBoolean("chat.tracking", true);
         chatTrackCancelled            = config.getBoolean("chat.track_cancelled", true);
