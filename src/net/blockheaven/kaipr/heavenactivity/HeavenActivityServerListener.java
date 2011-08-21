@@ -1,19 +1,29 @@
 package net.blockheaven.kaipr.heavenactivity;
 
+import net.blockheaven.kaipr.heavenactivity.register.payment.Methods;
+
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-import com.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class HeavenActivityServerListener extends ServerListener {
     
+    /**
+     * Plugin reference
+     */
     private HeavenActivity plugin;
+    
+    /**
+     * Register handler for economy plugins
+     */
+    private Methods ecoMethods;
 
     public HeavenActivityServerListener(HeavenActivity plugin) {
         this.plugin = plugin;
+        this.ecoMethods = new Methods();
     }
 
 
@@ -31,18 +41,12 @@ public class HeavenActivityServerListener extends ServerListener {
             }
         }
         
-        if (HeavenActivity.iConomy == null && plugin.config.incomeEnabled) {
-            Plugin iConomy = plugin.getServer().getPluginManager().getPlugin("iConomy");
-
-            if (iConomy != null) {
-                if (iConomy.isEnabled()) {
-                    if (!iConomy.getDescription().getVersion().startsWith("5")) {
-                        HeavenActivity.logger.warning(
-                                "[HeavenActivity] This version needs iConomy 5 to work! If you get errors, upgrade iConomy or disable income!");
-                    }
-                    HeavenActivity.iConomy = (iConomy)iConomy;
-                    HeavenActivity.logger.info("[HeavenActivity] hooked into iConomy.");
-                }
+        if (!this.ecoMethods.hasMethod()) {
+            if(this.ecoMethods.setMethod(event.getPlugin())) {
+                // You might want to make this a public variable inside your MAIN class public Method Method = null;
+                // then reference it through this.plugin.Method so that way you can use it in the rest of your plugin ;)
+                HeavenActivity.ecoMethod = this.ecoMethods.getMethod();
+                HeavenActivity.logger.info("[HeavenActivity] Payment method found (" + HeavenActivity.ecoMethod.getName() + " version: " + HeavenActivity.ecoMethod.getVersion() + ")");
             }
         }
         
@@ -58,10 +62,12 @@ public class HeavenActivityServerListener extends ServerListener {
             }
         }
         
-        if (HeavenActivity.iConomy != null) {
-            if (event.getPlugin().getDescription().getName().equals("iConomy")) {
-                HeavenActivity.iConomy = null;
-                HeavenActivity.logger.info("[HeavenActivity] un-hooked from iConomy.");
+        if (this.ecoMethods != null && this.ecoMethods.hasMethod()) {
+            Boolean check = this.ecoMethods.checkDisabled(event.getPlugin());
+
+            if(check) {
+                HeavenActivity.ecoMethod = null;
+                HeavenActivity.logger.info("[HeavenActivity] Payment method was disabled. No longer accepting payments.");
             }
         }
         

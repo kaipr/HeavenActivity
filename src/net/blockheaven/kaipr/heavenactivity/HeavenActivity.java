@@ -7,6 +7,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import net.blockheaven.kaipr.heavenactivity.register.payment.Method;
+import net.blockheaven.kaipr.heavenactivity.register.payment.Method.MethodAccount;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,8 +23,6 @@ import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.iConomy.*;
-import com.iConomy.system.Holdings;
 import com.nijiko.permissions.PermissionHandler;
 
 
@@ -47,9 +48,9 @@ public class HeavenActivity extends JavaPlugin {
     public static PermissionHandler Permissions;
     
     /**
-     * iConomy hook
+     * Register-based economy handling method
      */
-    public static iConomy iConomy;
+    public static Method ecoMethod;
     
     /**
      * Sequence update timer
@@ -324,35 +325,34 @@ public class HeavenActivity extends JavaPlugin {
     /**
      * Gives income to online players
      */
-    @SuppressWarnings("static-access")
     protected void handleOnlineIncome() {
         
         if (data.playersActivities.size() == 0)
             return;
         
-        if (iConomy == null) {
-            logger.warning("[HeavenActivity] Want to give income, but iConomy isn't active! Skipping...");
+        if (ecoMethod == null) {
+            logger.warning("[HeavenActivity] Want to give income, but no economy plugin is active! Skipping...");
             return;
         }
         
         for (Player player : getServer().getOnlinePlayers()) {
             final int activity = data.getActivity(player);
             if ((int)activity >= config.incomeMinActivity) {
-                Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
+                MethodAccount account = ecoMethod.getAccount(player.getName());
                 
                 Double amount = config.incomeBaseValue 
                   + (((double)(activity - config.incomeTargetActivity) / (double)config.incomeActivityModifier) * config.incomeBaseValue)
-                  + (balance.balance() * config.incomeBalanceMultiplier);
+                  + (account.balance() * config.incomeBalanceMultiplier);
                 
                 if (amount > 0.0 || config.incomeAllowNegative) {
-                    balance.add(amount);
+                    account.add(amount);
                 
                     if (hasPermission(player, "activity.notify.income")) {
-                        sendMessage(player, "You got " + activityColor(activity) + iConomy.format(amount) 
+                        sendMessage(player, "You got " + activityColor(activity) + ecoMethod.format(amount) 
                             + ChatColor.GRAY + " income for being " 
                             + activityColor(activity) + activity + "% " + ChatColor.GRAY + "active.");
                         sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
-                            + iConomy.format(balance.balance()));
+                            + ecoMethod.format(account.balance()));
                     }
                     
                     continue;
