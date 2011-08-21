@@ -2,7 +2,6 @@ package net.blockheaven.kaipr.heavenactivity;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.util.config.Configuration;
@@ -63,35 +62,50 @@ public class HeavenActivityConfig {
     public void load() {
         config.load();
         
+        if (config.getProperty("income.base_value") != null && config.getProperty("income.expression") == null) {
+            HeavenActivity.logger.info("[HeavenActivity] Migrating pre-1.0 income configuration to income expression...");
+            int baseValue             = config.getInt("income.base_value", 8);
+            int targetActivity        = config.getInt("income.target_activity", 50);
+            int activityModifier      = config.getInt("income.activity_modifier", 75);
+            double balanceMultiplier  = config.getDouble("income.balance_multiplier", 0.0);
+            
+            StringBuilder exp = new StringBuilder();
+            exp.append(baseValue);
+            exp.append(" + (((player_activity - ").append(targetActivity).append(") / ").append(activityModifier).append(") * ").append(baseValue).append(")");
+            exp.append(" + (player_balance * ").append(balanceMultiplier).append(")");
+            config.setProperty("income.expression", exp.toString());
+            config.save();
+            config.load();
+        }
+        
         maxSequences                  = config.getInt("general.max_sequences", 15);
         defaultSequences              = config.getInt("general.default_sequences", maxSequences);
         sequenceInterval              = config.getInt("general.sequence_interval", 60);
         notificationSequence          = config.getInt("general.notification_sequence", 6);
         incomeSequence                = config.getInt("general.income_sequence", 15);
         pointMultiplier               = config.getDouble("general.point_multiplier", 1.0);
+        logCommands                   = config.getBoolean("general.log_commands", false);
         
         incomeEnabled                 = config.getBoolean("income.enabled", true);
         incomeMinActivity             = config.getInt("income.min_activity", 1);
         incomeAllowNegative           = config.getBoolean("income.allow_negative", true);
-        incomeExpression              = new Parser(config.getString("income.expression", "8 + (((activity - 50) / 75) * 8)"));
+        incomeExpression              = new Parser(config.getString("income.expression", "8 + (((player_activity - 50) / 75) * 8)"));
         
         chatTracking                  = config.getBoolean("chat.tracking", true);
         chatTrackCancelled            = config.getBoolean("chat.track_cancelled", true);
         chatPoints                    = config.getDouble("chat.points", 1.0);
-        chatCharPoints                = config.getDouble("chat.char_points", 0.49);
+        chatCharPoints                = config.getDouble("chat.char_points", 0.50);
         commandTracking               = config.getBoolean("command.tracking", true);
         commandTrackCancelled         = config.getBoolean("command.track_cancelled", true);
         commandPoints                 = config.getDouble("command.points", 1.0);
-        commandCharPoints             = config.getDouble("command.char_points", 0.53);
+        commandCharPoints             = config.getDouble("command.char_points", 0.55);
         moveTracking                  = config.getBoolean("move.tracking", true);
-        moveDelay                     = config.getInt("move.delay", 1100);
-        movePoints                    = config.getDouble("move.points", 0.58);
+        moveDelay                     = config.getInt("move.delay", 1200);
+        movePoints                    = config.getDouble("move.points", 0.5);
         blockTracking                 = config.getBoolean("block.tracking", true);
-        blockDelay                    = config.getInt("block.delay", 950);
-        blockPlacePoints              = config.getDouble("block.place_points", 3.75);
-        blockBreakPoints              = config.getDouble("block.break_points", 1.95);
-        
-        logCommands                   = config.getBoolean("general.log_commands", false);
+        blockDelay                    = config.getInt("block.delay", 900);
+        blockPlacePoints              = config.getDouble("block.place_points", 4.0);
+        blockBreakPoints              = config.getDouble("block.break_points", 2.0);
         
         Iterator<String> multiplierSetNameIterator = config.getKeys("multiplier").iterator();
         while (multiplierSetNameIterator.hasNext()) {
@@ -107,30 +121,6 @@ public class HeavenActivityConfig {
             
             multiplierSets.put(multiplierSetName, multiplierSet);
         }
-    }
-    
-    public void reloadAndSave() {
-        config.load();
-        
-        List<String> configNodes;
-        
-        configNodes = config.getKeys("general");
-        if (!configNodes.contains("max_sequences"))
-            config.setProperty("general.max_sequences", maxSequences);
-        if (!configNodes.contains("sequence_interval"))
-            config.setProperty("general.sequence_interval", sequenceInterval);
-        if (!configNodes.contains("notification_sequence"))
-            config.setProperty("general.notification_sequence", notificationSequence);
-        if (!configNodes.contains("income_sequence"))
-            config.setProperty("general.income_sequence", incomeSequence);
-        if (!configNodes.contains("point_multiplier"))
-            config.setProperty("general.point_multiplier", pointMultiplier);
-        
-        configNodes = config.getKeys("income");
-        if (!configNodes.contains("enabled"))
-            config.setProperty("income.enabled", incomeEnabled);
-        
-        config.save();
     }
     
     public Double pointsFor(ActivitySource source) {

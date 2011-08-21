@@ -19,15 +19,10 @@ income:
     min_activity: 1
     # Allow negative income? (e.g. because of a negative balance_multiplier)
     allow_negative: true
-    # Multiplies the current balance of the players and adds/subtracts it to/from the income
-    balance_multiplier: 0.0
-    # How much the activity affects the income, less is more (read documentation!)
-    activity_modifier: 75
-    # Base income value, this is the value the players get at target_activity
-    base_value: 8.0
-    # Target activity for the base_value, everything above will give more income
-    # everything below will give less income
-    target_activity: 50
+    # Expression to calculate the income players get, available variables:
+    # - player_activity: Current activity of player
+    # - player_balance: Current money balance of player
+    expression: "8 + (((player_activity - 50) / 75) * 8)"
 block:
     # Enable tracking of block break/place events?
     tracking: true

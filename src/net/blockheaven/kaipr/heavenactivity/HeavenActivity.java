@@ -101,7 +101,6 @@ public class HeavenActivity extends JavaPlugin {
      * Called when the plugin gets disabled, disable timers and save stats
      */
     public void onDisable() {
-        config.reloadAndSave();
         stopUpdateTimer();
     }
     
@@ -138,7 +137,6 @@ public class HeavenActivity extends JavaPlugin {
             if (args.length == 1) {
                 sendMessage(sender, ChatColor.RED + "/activity admin <reload>");
             } else if (args[1].compareToIgnoreCase("reload") == 0) {
-                config.reloadAndSave();
                 config.load();
                 stopUpdateTimer();
                 startUpdateTimer();
@@ -340,7 +338,7 @@ public class HeavenActivity extends JavaPlugin {
             if ((int)activity >= config.incomeMinActivity) {
                 MethodAccount account = ecoMethod.getAccount(player.getName());
                 
-                config.incomeExpression.setVariable("activity", activity);
+                config.incomeExpression.setVariable("player_activity", activity);
                 config.incomeExpression.setVariable("player_balance", account.balance());
                 
                 final Double amount = config.incomeExpression.getValue();
