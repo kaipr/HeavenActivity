@@ -1,5 +1,9 @@
 package net.blockheaven.kaipr.heavenactivity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,8 +61,30 @@ public class HeavenActivityConfig {
     public HeavenActivityConfig(HeavenActivity plugin) {
         this.plugin = plugin;
         
-        config = plugin.getConfiguration();
+        File configFile = new File(plugin.getDataFolder() + File.separator + "config.yml");
+        if (!configFile.exists()) {
+            try {
+                HeavenActivity.logger.warning("[HeavenActivity] Config file not found - generating default.");
+                configFile.getParentFile().mkdir();
+                configFile.createNewFile();
+                OutputStream output = new FileOutputStream(configFile, false);
+                InputStream input = HeavenActivityConfig.class.getResourceAsStream("/resources/" + configFile.getName());
+                byte[] buf = new byte[8192];
+                while (true) {
+                    int length = input.read(buf);
+                    if (length < 0) {
+                        break;
+                    }
+                    output.write(buf, 0, length);
+                }
+                input.close();
+                output.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         
+        config = plugin.getConfiguration();
         load();
     }
     
@@ -80,6 +106,7 @@ public class HeavenActivityConfig {
             config.removeProperty("income.base_value");
             config.removeProperty("income.target_activity");
             config.removeProperty("income.activity_modifier");
+            config.removeProperty("income.balance_multiplier");
             config.save();
             config.load();
         }

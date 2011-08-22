@@ -146,6 +146,14 @@ public class HeavenActivity extends JavaPlugin {
                 stopUpdateTimer();
                 startUpdateTimer();
                 sendMessage(sender, ChatColor.GREEN + "Reloaded");
+            } else if (args[1].compareToIgnoreCase("debug") == 0) {
+                if (config.debug) {
+                    config.debug = false;
+                    sendMessage(sender, "Debug mode turned " + ChatColor.RED + "OFF");
+                } else {
+                    config.debug = true;
+                    sendMessage(sender, "Debug mode turned " + ChatColor.GREEN +"ON");
+                }
             } else if (args[1].compareToIgnoreCase("benchmark") == 0) {
                 TimerTask getting = new TimerTask() {
                     public void run() {
@@ -303,6 +311,17 @@ public class HeavenActivity extends JavaPlugin {
         sender.sendMessage(ChatColor.RED + "No matching player found, matching yourself.");
         return (Player) sender;
         
+    }
+    
+    /**
+     * Returns current activity of given player
+     * 
+     * @param playerName
+     * @return
+     */
+    @Deprecated
+    public int getActivity(Player player) {
+        return data.getActivity(player.getName());
     }
     
     /**
