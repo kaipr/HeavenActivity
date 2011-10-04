@@ -5,8 +5,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-import com.iConomy.iConomy;
-import com.nijikokun.bukkit.Permissions.Permissions;
+import com.iCo6.*;
 
 public class HeavenActivityServerListener extends ServerListener {
 	
@@ -19,52 +18,29 @@ public class HeavenActivityServerListener extends ServerListener {
 
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
-        
-    	if (HeavenActivity.Permissions == null) {
-        	Plugin permissions = plugin.getServer().getPluginManager().getPlugin("Permissions");
-        	
-        	if (permissions != null) {
-        		if (permissions.isEnabled()) {
-        			HeavenActivity.Permissions = ((Permissions)permissions).getHandler();
-        			HeavenActivity.logger.info("[HeavenActivity] hooked into Permissions");
-        		}
-        	}
-        }
-    	
     	if (HeavenActivity.iConomy == null && plugin.config.incomeEnabled) {
             Plugin iConomy = plugin.getServer().getPluginManager().getPlugin("iConomy");
 
             if (iConomy != null) {
                 if (iConomy.isEnabled()) {
-                    if (!iConomy.getDescription().getVersion().startsWith("5")) {
+                    if (!iConomy.getDescription().getVersion().startsWith("6")) {
                     	HeavenActivity.logger.warning(
-                    			"[HeavenActivity] This version needs iConomy 5 to work! If you get errors, upgrade iConomy or disable income!");
+                    			"[HeavenActivity] This version needs iConomy 6 to work! If you get errors, upgrade iConomy or disable income!");
                     }
                     HeavenActivity.iConomy = (iConomy)iConomy;
                     HeavenActivity.logger.info("[HeavenActivity] hooked into iConomy.");
                 }
             }
         }
-    	
     }
 
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
-        
-    	if (HeavenActivity.Permissions != null) {
-            if (event.getPlugin().getDescription().getName().equals("Permissions")) {
-                HeavenActivity.Permissions = null;
-                HeavenActivity.logger.info("[HeavenActivity] un-hooked from Permissions.");
-            }
-        }
-    	
     	if (HeavenActivity.iConomy != null) {
             if (event.getPlugin().getDescription().getName().equals("iConomy")) {
                 HeavenActivity.iConomy = null;
                 HeavenActivity.logger.info("[HeavenActivity] un-hooked from iConomy.");
             }
         }
-    	
     }
-    
 }

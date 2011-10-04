@@ -1,6 +1,6 @@
 name: HeavenActivity
 main: net.blockheaven.kaipr.heavenactivity.HeavenActivity
-version: 0.3.1
+version: 0.3.2
 commands:
     activity:
         description: Activity commands

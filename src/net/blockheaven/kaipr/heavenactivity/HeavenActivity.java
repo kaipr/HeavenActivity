@@ -19,10 +19,9 @@ import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.iConomy.*;
-import com.iConomy.system.Holdings;
-import com.nijiko.permissions.PermissionHandler;
-
+import com.iCo6.*;
+import com.iCo6.system.Holdings;
+import com.iCo6.system.Account;
 
 public class HeavenActivity extends JavaPlugin {
 	/**
@@ -34,11 +33,6 @@ public class HeavenActivity extends JavaPlugin {
      * Configuration
      */
     public HeavenActivityConfig config;
-    
-    /**
-     * Permission handler
-     */
-    public static PermissionHandler Permissions;
     
     /**
      * iConomy hook
@@ -207,14 +201,11 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public boolean hasPermission(Player player, String node, boolean noPermissionsReturn) {
-    	if (player.isOp())
-    		return true;
-    	
-        if (Permissions != null) {
-        	return Permissions.has(player, node);
-        } else {
-        	return noPermissionsReturn;
-        }
+    	if (player.hasPermission(node)) {
+    		return player.hasPermission(node);
+    	} else {
+    		return noPermissionsReturn;
+    	}
     }
     
     /**
@@ -225,16 +216,9 @@ public class HeavenActivity extends JavaPlugin {
      * @return
      */
     public double getMultiplier(Player player, String which) {
-        if (Permissions == null)
-        	return 1.0;
-        
-    	final double multiplier = Permissions.getPermissionDouble(
-    			player.getWorld().getName(), player.getName(), "activity.multiplier." + which);
-        if (multiplier == -1.0) {
-        	return 1.0;
-        } else {
-        	return multiplier;
-        }
+    	/* unsupported by superperms. */
+    	
+    	return 1.0;
     }
     
     /**
@@ -399,11 +383,12 @@ public class HeavenActivity extends JavaPlugin {
     	for (Player player : getServer().getOnlinePlayers()) {
         	final int activity = getActivity(player);
         	if ((int)activity >= config.incomeMinActivity) {
-				Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
-                
+                Account account = new Account(player.getName());
+				Holdings balance = account.getHoldings();
+				
 				Double amount = config.incomeBaseValue 
                   + (((double)(activity - config.incomeTargetActivity) / (double)config.incomeActivityModifier) * config.incomeBaseValue)
-                  + (balance.balance() * config.incomeBalanceMultiplier);
+                  + (balance.getBalance() * config.incomeBalanceMultiplier);
                 
 				if (amount > 0.0 || config.incomeAllowNegative) {
 				    balance.add(amount);
@@ -412,7 +397,7 @@ public class HeavenActivity extends JavaPlugin {
                 		+ ChatColor.GRAY + " income for being " 
                 		+ activityColor(activity) + activity + "% " + ChatColor.GRAY + "active.");
                     sendMessage(player, "Your Balance is now: " + ChatColor.WHITE 
-                		+ iConomy.format(balance.balance()));
+                		+ iConomy.format(balance.getBalance()));
                     
                     continue;
 				}
